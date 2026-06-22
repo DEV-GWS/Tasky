@@ -38,42 +38,71 @@ function App() {
   useEffect(() => {
     fetchTasks();
   }, []);
+return (
+  <div className="min-h-screen bg-gray-900 text-white p-8">
 
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Task Manager</h1>
+    <div className="max-w-xl mx-auto">
 
-      <div>
+      <h1 className="text-4xl font-bold mb-6">
+        Task Manager
+      </h1>
+
+      <div className="flex gap-2 mb-6">
+
         <input
           type="text"
           placeholder="Enter task..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          className="flex-1 p-3 rounded bg-gray-800 border border-gray-700 outline-none"
         />
 
-        <button onClick={createTask}>Add Task</button>
+        <button
+          onClick={createTask}
+          className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Add
+        </button>
+
       </div>
 
-      <ul>
+      <div className="space-y-3">
+
         {tasks.map((task) => (
-          <li key={task._id}>
+
+          <div
+            key={task._id}
+            className="bg-gray-800 p-4 rounded flex justify-between items-center"
+          >
+
             <span
               onClick={() => toggleTask(task._id)}
-              style={{
-                textDecoration: task.completed ? "line-through" : "none",
-                cursor: "pointer",
-                marginRight: "10px",
-              }}
+              className={`cursor-pointer ${
+                task.completed
+                  ? "line-through text-gray-500"
+                  : ""
+              }`}
             >
               {task.title}
             </span>
 
-            <button onClick={() => deleteTask(task._id)}>Delete</button>
-          </li>
+            <button
+              onClick={() => deleteTask(task._id)}
+              className="bg-red-600 px-3 py-1 rounded hover:bg-red-700"
+            >
+              Delete
+            </button>
+
+          </div>
+
         ))}
-      </ul>
+
+      </div>
+
     </div>
-  );
+
+  </div>
+);
 }
 
 export default App;
