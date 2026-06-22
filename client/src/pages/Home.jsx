@@ -130,6 +130,16 @@ function Home() {
     return true;
   });
 
+  const totalTasks = tasks.length;
+
+  const completedTasks = tasks.filter((t) => t.completed).length;
+
+  const activeTasks = totalTasks - completedTasks;
+
+  const completionRate = totalTasks
+    ? Math.round((completedTasks / totalTasks) * 100)
+    : 0;
+
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6">
       <div className="max-w-3xl mx-auto">
@@ -146,6 +156,38 @@ function Home() {
           >
             Logout
           </button>
+        </div>
+        <h2 className="text-xl font-semibold mb-3 text-gray-300">Overview</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div className="bg-gray-900 p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Total</p>
+            <p className="text-2xl font-bold">{totalTasks}</p>
+          </div>
+
+          <div className="bg-gray-900 p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Completed</p>
+            <p className="text-2xl font-bold text-green-400">
+              {completedTasks}
+            </p>
+          </div>
+
+          <div className="bg-gray-900 p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Active</p>
+            <p className="text-2xl font-bold text-yellow-400">{activeTasks}</p>
+          </div>
+
+          <div className="bg-gray-900 p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Progress</p>
+            <p className="text-2xl font-bold text-blue-400">
+              {completionRate}%
+            </p>
+          </div>
+        </div>
+        <div className="w-full bg-gray-800 h-2 rounded mb-6">
+          <div
+            className="bg-blue-500 h-2 rounded"
+            style={{ width: `${completionRate}%` }}
+          ></div>
         </div>
         {error && (
           <div className="bg-red-600 text-white p-2 rounded mb-4">{error}</div>
