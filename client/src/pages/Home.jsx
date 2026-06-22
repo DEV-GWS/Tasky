@@ -7,10 +7,10 @@ function Home() {
 
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
-  // logout
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -23,29 +23,27 @@ function Home() {
     },
   };
 
-  // fetch tasks
   const fetchTasks = async () => {
     try {
+      setLoading(true);
       const res = await axios.get("http://localhost:5000/api/tasks", config);
-
       setTasks(res.data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // create task
   const createTask = async () => {
     if (!title.trim()) return;
 
     try {
       await axios.post("http://localhost:5000/api/tasks", { title }, config);
-
       setTitle("");
-
       fetchTasks();
     } catch (error) {
-      console.error(error);
+      alert(error?.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -53,10 +51,9 @@ function Home() {
   const deleteTask = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/tasks/${id}`, config);
-
       fetchTasks();
     } catch (error) {
-      console.error(error);
+      alert(error?.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -64,10 +61,9 @@ function Home() {
   const toggleTask = async (id) => {
     try {
       await axios.patch(`http://localhost:5000/api/tasks/${id}`, {}, config);
-
       fetchTasks();
     } catch (error) {
-      console.error(error);
+      alert(error?.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -83,7 +79,7 @@ function Home() {
 
           <button
             onClick={logout}
-            className="bg-red-600 px-4 py-2 rounded hover:bg-red-700"
+            className="bg-red-600 px-4 py-2 rounded hover:bg-red-700 transition"
           >
             Logout
           </button>
@@ -107,10 +103,14 @@ function Home() {
         </div>
 
         <div className="space-y-3">
+          {loading && <p className="text-gray-400">Loading tasks...</p>}
+          {!loading && tasks.length === 0 && (
+            <p className="text-gray-500">No tasks yet. Add your first one 🚀</p>
+          )}
           {tasks.map((task) => (
             <div
               key={task._id}
-              className="bg-gray-800 p-4 rounded flex justify-between items-center"
+              className="bg-gray-800 p-4 rounded flex justify-between items-center hover:bg-gray-750 transition"
             >
               <span
                 onClick={() => toggleTask(task._id)}
