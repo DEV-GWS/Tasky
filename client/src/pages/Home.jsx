@@ -7,6 +7,8 @@ function Home() {
 
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("newest");
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -121,14 +123,33 @@ function Home() {
     fetchTasks();
   }, []);
 
-  const filteredTasks = tasks.filter((task) => {
-    if (filter === "completed") return task.completed;
-    if (filter === "active") return !task.completed;
-    if (filter === "high") return task.priority === "high";
-    if (filter === "medium") return task.priority === "medium";
-    if (filter === "low") return task.priority === "low";
-    return true;
-  });
+  const filteredTasks = tasks
+    .filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      if (sort === "newest") {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+
+      if (sort === "oldest") {
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      }
+
+      if (sort === "priority") {
+        const order = {
+          high: 3,
+          medium: 2,
+          low: 1,
+        };
+
+        return order[b.priority] - order[a.priority];
+      }
+
+      if (sort === "dueDate") {
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      }
+
+      return 0;
+    });
 
   const totalTasks = tasks.length;
 
@@ -198,18 +219,43 @@ function Home() {
             {success}
           </div>
         )}
+        <div className="flex flex-col md:flex-row gap-3 mb-6">
+          {/* SEARCH */}
+          <input
+            type="text"
+            placeholder="Search tasks..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 p-3 rounded bg-gray-800 outline-none"
+          />
+
+          {/* SORT */}
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="bg-gray-800 p-3 rounded"
+          >
+            <option value="newest">Newest</option>
+
+            <option value="oldest">Oldest</option>
+
+            <option value="priority">Priority</option>
+
+            <option value="dueDate">Due Date</option>
+          </select>
+        </div>
         <div className="bg-gray-900 p-4 rounded-xl flex gap-2 mb-6">
           <input
             type="text"
             placeholder="Enter task..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="flex-1 p-3 rounded bg-gray-800 outline-none"
+            className="bg-gray-800 p-3 rounded transition hover:bg-gray-700"
           />
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-            className="bg-gray-800 p-3 rounded"
+            className="bg-gray-800 p-3 rounded transition hover:bg-gray-700"
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
