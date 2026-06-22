@@ -73,7 +73,7 @@ function Home() {
       toast.success("Task added");
     } catch (error) {
       setError(error?.response?.data?.message || "Something went wrong");
-      toast.error("Task adding failed!");
+      toast.error("Task Couldn't bez");
     } finally {
       setLoading(false);
     }
@@ -90,10 +90,8 @@ function Home() {
       );
       fetchTasks();
       setSuccess("Task deleted");
-      toast.success("Task deleted");
     } catch (error) {
       setError(error?.response?.data?.message || "Something went wrong");
-      toast.error("Task deletion failed");
     }
   };
 
@@ -129,33 +127,45 @@ function Home() {
   }, []);
 
   const filteredTasks = tasks
+    .filter((task) => {
+      if (filter === "completed") {
+        return task.completed;
+      }
+      if (filter === "active") {
+        return !task.completed;
+      }
+      if (filter === "high") {
+        return task.priority === "high";
+      }
+      if (filter === "medium") {
+        return task.priority === "medium";
+      }
+      if (filter === "low") {
+        return task.priority === "low";
+      }
+      return true;
+    })
     .filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       if (sort === "newest") {
         return new Date(b.createdAt) - new Date(a.createdAt);
       }
-
       if (sort === "oldest") {
         return new Date(a.createdAt) - new Date(b.createdAt);
       }
-
       if (sort === "priority") {
         const order = {
           high: 3,
           medium: 2,
           low: 1,
         };
-
         return order[b.priority] - order[a.priority];
       }
-
       if (sort === "dueDate") {
         return new Date(a.dueDate) - new Date(b.dueDate);
       }
-
       return 0;
     });
-
   const totalTasks = tasks.length;
 
   const completedTasks = tasks.filter((t) => t.completed).length;
@@ -167,7 +177,7 @@ function Home() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6 md:p-10">
+    <div className="min-h-screen bg-gray-950 text-white p-6">
       <div className="max-w-3xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -231,7 +241,7 @@ function Home() {
             placeholder="Search tasks..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-gray-800 p-3 rounded outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 p-3 rounded bg-gray-800 outline-none"
           />
 
           {/* SORT */}
@@ -255,7 +265,7 @@ function Home() {
             placeholder="Enter task..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="bg-gray-800 p-3 rounded outline-none transition focus:ring-2 focus:ring-blue-500"
+            className="bg-gray-800 p-3 rounded transition hover:bg-gray-700"
           />
           <select
             value={priority}
@@ -271,12 +281,12 @@ function Home() {
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="bg-gray-800 p-3 rounded outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-gray-800 p-3 rounded"
           />
           <button
             disabled={loading}
             onClick={createTask}
-            className={`bg-blue-600 px-4 py-2 rounded transition transition-all duration-200 ${
+            className={`bg-blue-600 px-5 rounded transition ${
               loading ? "opacity-50" : "hover:bg-blue-700"
             }`}
           >
@@ -307,7 +317,7 @@ function Home() {
           {filteredTasks.map((task) => (
             <div
               key={task._id}
-              className="bg-gray-900 p-5 rounded-xl flex justify-between items-center hover:bg-gray-800 transition duration-200 shadow-lg"
+              className="bg-gray-900 p-4 rounded-xl flex justify-between items-center hover:bg-gray-800 transition"
             >
               <span
                 onClick={() => toggleTask(task._id)}
