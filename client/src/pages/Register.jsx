@@ -6,20 +6,23 @@ function Register() {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
-
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const registerUser = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post(import.meta.env.VITE_API_URL + "/api/auth/register", {
-        username,
-        email,
-        password,
-      });
+      const res = await axios.post(
+        import.meta.env.VITE_API_URL + "/api/auth/register",
+        {
+          username,
+          email,
+          password,
+        },
+      );
 
       localStorage.setItem("token", res.data.token);
 

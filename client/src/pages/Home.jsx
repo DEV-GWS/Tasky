@@ -8,14 +8,17 @@ function Home() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [priority, setPriority] = useState("medium");
   const today = new Date().toISOString().split("T")[0];
   const [dueDate, setDueDate] = useState(today);
 
   const token = localStorage.getItem("token");
-
+  
   const logout = () => {
     localStorage.removeItem("token");
+    setSuccess("Logged out successfully");
     navigate("/login");
   };
 
@@ -27,6 +30,8 @@ function Home() {
   };
 
   const fetchTasks = async () => {
+    setError("");
+    setSuccess("");
     try {
       setLoading(true);
       const res = await axios.get(
@@ -35,7 +40,7 @@ function Home() {
       );
       setTasks(res.data);
     } catch (error) {
-      console.error(error);
+      setError(error?.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -43,7 +48,9 @@ function Home() {
 
   const createTask = async () => {
     if (!title.trim()) return;
-
+    setLoading(true);
+    setError("");
+    setSuccess("");
     try {
       await axios.post(
         import.meta.env.VITE_API_URL + "/api/tasks",
@@ -58,26 +65,34 @@ function Home() {
       setPriority("medium");
       setDueDate(today);
       fetchTasks();
+      setSuccess("Task created successfully");
     } catch (error) {
-      alert(error?.response?.data?.message || "Something went wrong");
+      setError(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   // delete task
   const deleteTask = async (id) => {
+    setError("");
+    setSuccess("");
     try {
       await axios.delete(
         `https://taskmanager-86s6.onrender.com/api/tasks/${id}`,
         config,
       );
       fetchTasks();
+      setSuccess("Task deleted");
     } catch (error) {
-      alert(error?.response?.data?.message || "Something went wrong");
+      setError(error?.response?.data?.message || "Something went wrong");
     }
   };
 
   // toggle task
   const toggleTask = async (id) => {
+    setError("");
+    setSuccess("");
     try {
       await axios.patch(
         `https://taskmanager-86s6.onrender.com/api/tasks/${id}`,
@@ -86,7 +101,7 @@ function Home() {
       );
       fetchTasks();
     } catch (error) {
-      alert(error?.response?.data?.message || "Something went wrong");
+      setError(error?.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -107,7 +122,15 @@ function Home() {
             Logout
           </button>
         </div>
+        {error && (
+          <div className="bg-red-600 text-white p-2 rounded mb-4">{error}</div>
+        )}
 
+        {success && (
+          <div className="bg-green-600 text-white p-2 rounded mb-4">
+            {success}
+          </div>
+        )}
         <div className="flex gap-2 mb-6">
           <input
             type="text"
@@ -135,22 +158,28 @@ function Home() {
             className="bg-gray-800 p-3 rounded"
           />
           <button
+            disabled={loading}
             onClick={createTask}
-            className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
+            className={`bg-blue-600 px-4 py-2 rounded ${
+              loading ? "opacity-50" : "hover:bg-blue-700"
+            }`}
           >
-            Add
+            {loading ? "Loading..." : "Add"}
           </button>
         </div>
 
         <div className="space-y-3">
           {loading && <p className="text-gray-400">Loading tasks...</p>}
           {!loading && tasks.length === 0 && (
-            <p className="text-gray-500">No tasks yet. Add your first one 🚀</p>
+            <div className="text-gray-500 text-center mt-10">
+              No tasks yet — time to start building 🔥
+            </div>
           )}
           {tasks.map((task) => (
             <div
               key={task._id}
-              className="bg-gray-800 p-4 rounded flex justify-between items-center hover:bg-gray-750 transition"
+              className="bg-gray-800 p-4 rounded flex justify-between items-center
+hover:bg-gray-700 transition duration-200"
             >
               <span
                 onClick={() => toggleTask(task._id)}
