@@ -1,13 +1,17 @@
 const Task = require("../models/Task");
 
 const getTasks = async (req, res) => {
-  const tasks = await Task.find();
+  const tasks = await Task.find({
+    user: req.user._id,
+  });
+
   res.json(tasks);
 };
 
 const createTask = async (req, res) => {
   const task = await Task.create({
     title: req.body.title,
+    user: req.user._id,
   });
 
   res.status(201).json(task);
