@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Register() {
   const navigate = useNavigate();
@@ -8,9 +9,6 @@ function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
   const registerUser = async (e) => {
     e.preventDefault();
 
@@ -23,14 +21,12 @@ function Register() {
           password,
         },
       );
-
       localStorage.setItem("token", res.data.token);
-
       navigate("/");
-    } catch (error) {
-      console.error(error);
 
-      alert("Register failed");
+      toast.success("Account created 🎉");
+    } catch (error) {
+      toast.error("Account creation failed");
     }
   };
 

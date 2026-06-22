@@ -7,8 +7,6 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const loginUser = async (e) => {
     e.preventDefault();
@@ -22,8 +20,9 @@ function Login() {
       localStorage.setItem("token", res.data.token);
 
       navigate("/");
+      toast.success("Logged in successfully");
     } catch (error) {
-      setError(error?.response?.data?.message || "Login Failed!");
+      toast.error("Login failed");
     }
   };
 
