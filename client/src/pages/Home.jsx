@@ -219,7 +219,7 @@ function Home() {
               <span
                 onClick={() => toggleTask(task._id)}
                 className={`cursor-pointer ${
-                  task.completed ? "line-through text-gray-500" : ""
+                  task.completed ? "line-through text-gray-500 opacity-70" : ""
                 }`}
               >
                 <div className="flex flex-col">
@@ -228,6 +228,7 @@ function Home() {
                       task.completed ? "line-through text-gray-500" : ""
                     }`}
                   >
+                    <span className="mr-2">{task.completed ? "✅" : "⬜"}</span>
                     {task.title}
                   </p>
 
