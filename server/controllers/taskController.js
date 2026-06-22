@@ -1,12 +1,11 @@
 const Task = require("../models/Task");
 
-// GET all tasks
+
 const getTasks = async (req, res) => {
   const tasks = await Task.find();
   res.json(tasks);
 };
 
-// CREATE task
 const createTask = async (req, res) => {
   const task = await Task.create({
     title: req.body.title,
@@ -15,7 +14,16 @@ const createTask = async (req, res) => {
   res.status(201).json(task);
 };
 
+const deleteTask = async (req, res) => {
+  await Task.findByIdAndDelete(req.params.id);
+
+  res.json({
+    message: "Task deleted",
+  });
+};
+
 module.exports = {
   getTasks,
   createTask,
+  deleteTask,
 };

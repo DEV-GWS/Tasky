@@ -23,6 +23,12 @@ function App() {
     fetchTasks();
   };
 
+  const deleteTask = async (id) => {
+    await axios.delete(`http://localhost:5000/api/tasks/${id}`);
+
+    fetchTasks();
+  };
+
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -39,15 +45,20 @@ function App() {
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <button onClick={createTask}>
-          Add Task
-        </button>
+        <button onClick={createTask}>Add Task</button>
       </div>
 
       <ul>
         {tasks.map((task) => (
           <li key={task._id}>
             {task.title}
+
+            <button
+              onClick={() => deleteTask(task._id)}
+              style={{ marginLeft: "10px" }}
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
