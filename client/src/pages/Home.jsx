@@ -8,6 +8,9 @@ function Home() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
+  const [priority, setPriority] = useState("medium");
+  const today = new Date().toISOString().split("T")[0];
+  const [dueDate, setDueDate] = useState(today);
 
   const token = localStorage.getItem("token");
 
@@ -26,7 +29,10 @@ function Home() {
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("https://taskmanager-86s6.onrender.com/api/tasks", config);
+      const res = await axios.get(
+        import.meta.env.VITE_API_URL + "/api/tasks",
+        config,
+      );
       setTasks(res.data);
     } catch (error) {
       console.error(error);
@@ -39,8 +45,18 @@ function Home() {
     if (!title.trim()) return;
 
     try {
-      await axios.post("https://taskmanager-86s6.onrender.com/api/tasks", { title }, config);
+      await axios.post(
+        import.meta.env.VITE_API_URL + "/api/tasks",
+        {
+          title,
+          priority,
+          dueDate,
+        },
+        config,
+      );
       setTitle("");
+      setPriority("medium");
+      setDueDate(today);
       fetchTasks();
     } catch (error) {
       alert(error?.response?.data?.message || "Something went wrong");
@@ -50,7 +66,10 @@ function Home() {
   // delete task
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`https://taskmanager-86s6.onrender.com/api/tasks/${id}`, config);
+      await axios.delete(
+        `https://taskmanager-86s6.onrender.com/api/tasks/${id}`,
+        config,
+      );
       fetchTasks();
     } catch (error) {
       alert(error?.response?.data?.message || "Something went wrong");
@@ -60,7 +79,11 @@ function Home() {
   // toggle task
   const toggleTask = async (id) => {
     try {
-      await axios.patch(`https://taskmanager-86s6.onrender.com/api/tasks/${id}`, {}, config);
+      await axios.patch(
+        `https://taskmanager-86s6.onrender.com/api/tasks/${id}`,
+        {},
+        config,
+      );
       fetchTasks();
     } catch (error) {
       alert(error?.response?.data?.message || "Something went wrong");
@@ -93,7 +116,24 @@ function Home() {
             onChange={(e) => setTitle(e.target.value)}
             className="flex-1 p-3 rounded bg-gray-800 border border-gray-700 outline-none"
           />
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="bg-gray-800 p-3 rounded"
+          >
+            <option value="low">Low</option>
 
+            <option value="medium">Medium</option>
+
+            <option value="high">High</option>
+          </select>
+
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className="bg-gray-800 p-3 rounded"
+          />
           <button
             onClick={createTask}
             className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
@@ -118,7 +158,19 @@ function Home() {
                   task.completed ? "line-through text-gray-500" : ""
                 }`}
               >
-                {task.title}
+                <div>
+                  <p>{task.title}</p>
+
+                  <div className="text-sm text-gray-400 mt-1">
+                    <span className="mr-3">Priority: {task.priority}</span>
+
+                    {task.dueDate && (
+                      <span>
+                        Due: {new Date(task.dueDate).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </span>
 
               <button

@@ -9,8 +9,16 @@ const getTasks = async (req, res) => {
 };
 
 const createTask = async (req, res) => {
+ const {
+    title,
+    priority,
+    dueDate,
+  } = req.body;
+
   const task = await Task.create({
-    title: req.body.title,
+    title,
+    priority,
+    dueDate,
     user: req.user._id,
   });
 
