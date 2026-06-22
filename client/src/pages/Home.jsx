@@ -26,7 +26,7 @@ function Home() {
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("https://your-backend.onrender.com/api/tasks", config);
+      const res = await axios.get("https://taskmanager-86s6.onrender.com/api/tasks", config);
       setTasks(res.data);
     } catch (error) {
       console.error(error);
@@ -39,7 +39,7 @@ function Home() {
     if (!title.trim()) return;
 
     try {
-      await axios.post("https://your-backend.onrender.com/api/tasks", { title }, config);
+      await axios.post("https://taskmanager-86s6.onrender.com/api/tasks", { title }, config);
       setTitle("");
       fetchTasks();
     } catch (error) {
@@ -50,7 +50,7 @@ function Home() {
   // delete task
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`https://your-backend.onrender.com/api/tasks/${id}`, config);
+      await axios.delete(`https://taskmanager-86s6.onrender.com/api/tasks/${id}`, config);
       fetchTasks();
     } catch (error) {
       alert(error?.response?.data?.message || "Something went wrong");
@@ -60,7 +60,7 @@ function Home() {
   // toggle task
   const toggleTask = async (id) => {
     try {
-      await axios.patch(`https://your-backend.onrender.com/api/tasks/${id}`, {}, config);
+      await axios.patch(`https://taskmanager-86s6.onrender.com/api/tasks/${id}`, {}, config);
       fetchTasks();
     } catch (error) {
       alert(error?.response?.data?.message || "Something went wrong");
