@@ -166,6 +166,7 @@ function Home() {
       }
       return 0;
     });
+    
   const totalTasks = tasks.length;
 
   const completedTasks = tasks.filter((t) => t.completed).length;
