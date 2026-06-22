@@ -1,6 +1,5 @@
 const Task = require("../models/Task");
 
-
 const getTasks = async (req, res) => {
   const tasks = await Task.find();
   res.json(tasks);
@@ -22,8 +21,25 @@ const deleteTask = async (req, res) => {
   });
 };
 
+const toggleTask = async (req, res) => {
+  const task = await Task.findById(req.params.id);
+
+  if (!task) {
+    return res.status(404).json({
+      message: "Task not found",
+    });
+  }
+
+  task.completed = !task.completed;
+
+  await task.save();
+
+  res.json(task);
+};
+
 module.exports = {
   getTasks,
   createTask,
   deleteTask,
+  toggleTask,
 };

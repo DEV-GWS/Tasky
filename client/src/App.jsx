@@ -29,6 +29,12 @@ function App() {
     fetchTasks();
   };
 
+  const toggleTask = async (id) => {
+    await axios.patch(`http://localhost:5000/api/tasks/${id}`);
+
+    fetchTasks();
+  };
+
   useEffect(() => {
     fetchTasks();
   }, []);
@@ -51,14 +57,18 @@ function App() {
       <ul>
         {tasks.map((task) => (
           <li key={task._id}>
-            {task.title}
-
-            <button
-              onClick={() => deleteTask(task._id)}
-              style={{ marginLeft: "10px" }}
+            <span
+              onClick={() => toggleTask(task._id)}
+              style={{
+                textDecoration: task.completed ? "line-through" : "none",
+                cursor: "pointer",
+                marginRight: "10px",
+              }}
             >
-              Delete
-            </button>
+              {task.title}
+            </span>
+
+            <button onClick={() => deleteTask(task._id)}>Delete</button>
           </li>
         ))}
       </ul>
