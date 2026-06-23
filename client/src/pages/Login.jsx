@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Login() {
   const navigate = useNavigate();
@@ -12,20 +13,24 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          email,
+          password,
+        },
+      );
 
       localStorage.setItem("token", res.data.token);
+      toast.success("Logged in successfully");
 
       navigate("/");
-      toast.success("Logged in successfully");
     } catch (error) {
-      toast.error("Login failed");
+      toast.error(error?.response?.data?.message || "Login failed");
+
+      alert(JSON.stringify(error?.response?.data));
     }
   };
-
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
       <form
