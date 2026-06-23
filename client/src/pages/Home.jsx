@@ -21,6 +21,12 @@ function Home() {
 
   const [loading, setLoading] = useState(false);
 
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+  useEffect(() => {
+    document.documentElement.className = theme;
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   const token = localStorage.getItem("token");
 
   // AXIOS CONFIG
@@ -46,17 +52,12 @@ function Home() {
 
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/tasks`,
-        config
+        config,
       );
 
       setTasks(res.data);
-
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to fetch tasks"
-      );
-
+      toast.error(error?.response?.data?.message || "Failed to fetch tasks");
     } finally {
       setLoading(false);
     }
@@ -78,7 +79,7 @@ function Home() {
           priority,
           dueDate,
         },
-        config
+        config,
       );
 
       setTitle("");
@@ -88,13 +89,8 @@ function Home() {
       toast.success("Task added");
 
       fetchTasks();
-
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to create task"
-      );
-
+      toast.error(error?.response?.data?.message || "Failed to create task");
     } finally {
       setLoading(false);
     }
@@ -105,27 +101,20 @@ function Home() {
     try {
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/tasks/${id}`,
-        config
+        config,
       );
 
-      setTasks((prev) =>
-        prev.filter((task) => task._id !== id)
-      );
+      setTasks((prev) => prev.filter((task) => task._id !== id));
 
       toast.success("Task deleted");
-
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to delete task"
-      );
+      toast.error(error?.response?.data?.message || "Failed to delete task");
     }
   };
 
   // TOGGLE TASK
   const toggleTask = async (id) => {
     try {
-
       // optimistic update
       setTasks((prev) =>
         prev.map((task) =>
@@ -134,22 +123,17 @@ function Home() {
                 ...task,
                 completed: !task.completed,
               }
-            : task
-        )
+            : task,
+        ),
       );
 
       await axios.patch(
         `${import.meta.env.VITE_API_URL}/api/tasks/${id}`,
         {},
-        config
+        config,
       );
-
     } catch (error) {
-
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to update task"
-      );
+      toast.error(error?.response?.data?.message || "Failed to update task");
 
       fetchTasks();
     }
@@ -165,7 +149,6 @@ function Home() {
 
     // FILTERS
     .filter((task) => {
-
       if (filter === "completed") {
         return task.completed;
       }
@@ -190,48 +173,30 @@ function Home() {
     })
 
     // SEARCH
-    .filter((task) =>
-      task.title
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    )
+    .filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
 
     // SORT
     .sort((a, b) => {
-
       if (sort === "newest") {
-        return (
-          new Date(b.createdAt) -
-          new Date(a.createdAt)
-        );
+        return new Date(b.createdAt) - new Date(a.createdAt);
       }
 
       if (sort === "oldest") {
-        return (
-          new Date(a.createdAt) -
-          new Date(b.createdAt)
-        );
+        return new Date(a.createdAt) - new Date(b.createdAt);
       }
 
       if (sort === "priority") {
-
         const order = {
           high: 3,
           medium: 2,
           low: 1,
         };
 
-        return (
-          order[b.priority] -
-          order[a.priority]
-        );
+        return order[b.priority] - order[a.priority];
       }
 
       if (sort === "dueDate") {
-        return (
-          new Date(a.dueDate) -
-          new Date(b.dueDate)
-        );
+        return new Date(a.dueDate) - new Date(b.dueDate);
       }
 
       return 0;
@@ -240,338 +205,210 @@ function Home() {
   // DASHBOARD STATS
   const totalTasks = tasks.length;
 
-  const completedTasks = tasks.filter(
-    (t) => t.completed
-  ).length;
+  const completedTasks = tasks.filter((t) => t.completed).length;
 
-  const activeTasks =
-    totalTasks - completedTasks;
+  const activeTasks = totalTasks - completedTasks;
 
   const completionRate = totalTasks
-    ? Math.round(
-        (completedTasks / totalTasks) * 100
-      )
+    ? Math.round((completedTasks / totalTasks) * 100)
     : 0;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white px-4 py-6 md:px-10">
-
-      <div className="max-w-4xl mx-auto">
-
+    <div
+      className={`min-h-screen px-4 py-8 md:px-10 transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-[#0b0f19] text-white"
+          : "bg-[#f6f7fb] text-gray-900"
+      }`}
+    >
+      <div className="max-w-5xl mx-auto space-y-8">
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-
+        <div
+          className={`flex flex-col md:flex-row md:items-center md:justify-between gap-6 p-6 rounded-2xl shadow-sm border ${
+            theme === "dark"
+              ? "bg-[#111827] border-gray-800"
+              : "bg-white border-gray-200"
+          }`}
+        >
           <div>
-            <h1 className="text-4xl font-bold">
+            <h1 className="text-3xl font-semibold tracking-tight">
               Task Manager
             </h1>
-
-            <p className="text-gray-400">
-              Organize your life properly
+            <p className="text-sm text-gray-500 mt-1">
+              Organize your tasks cleanly and efficiently
             </p>
           </div>
 
-          <button
-            onClick={logout}
-            className="bg-red-600 px-4 py-2 rounded-lg
-            hover:bg-red-700 transition-all duration-200
-            active:scale-95"
-          >
-            Logout
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={logout}
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition active:scale-95"
+            >
+              Logout
+            </button>
 
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition active:scale-95 ${
+                theme === "dark"
+                  ? "bg-gray-700 hover:bg-gray-600 text-white"
+                  : "bg-gray-200 hover:bg-gray-300 text-gray-800"
+              }`}
+            >
+              {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
+            </button>
+          </div>
         </div>
 
         {/* DASHBOARD */}
-        <h2 className="text-xl font-semibold mb-3 text-gray-300">
-          Overview
-        </h2>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-
-          <div className="bg-gray-900 p-4 rounded-xl">
-            <p className="text-gray-400 text-sm">
-              Total
-            </p>
-
-            <p className="text-2xl font-bold">
-              {totalTasks}
-            </p>
-          </div>
-
-          <div className="bg-gray-900 p-4 rounded-xl">
-            <p className="text-gray-400 text-sm">
-              Completed
-            </p>
-
-            <p className="text-2xl font-bold text-green-400">
-              {completedTasks}
-            </p>
-          </div>
-
-          <div className="bg-gray-900 p-4 rounded-xl">
-            <p className="text-gray-400 text-sm">
-              Active
-            </p>
-
-            <p className="text-2xl font-bold text-yellow-400">
-              {activeTasks}
-            </p>
-          </div>
-
-          <div className="bg-gray-900 p-4 rounded-xl">
-            <p className="text-gray-400 text-sm">
-              Progress
-            </p>
-
-            <p className="text-2xl font-bold text-blue-400">
-              {completionRate}%
-            </p>
-          </div>
-
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: "Total", value: totalTasks },
+            {
+              label: "Completed",
+              value: completedTasks,
+              color: "text-green-500",
+            },
+            { label: "Active", value: activeTasks, color: "text-yellow-500" },
+            {
+              label: "Progress",
+              value: `${completionRate}%`,
+              color: "text-blue-500",
+            },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className={`p-5 rounded-xl border shadow-sm ${
+                theme === "dark"
+                  ? "bg-[#111827] border-gray-800"
+                  : "bg-white border-gray-200"
+              }`}
+            >
+              <p className="text-sm text-gray-500">{item.label}</p>
+              <p className={`text-2xl font-semibold mt-1 ${item.color || ""}`}>
+                {item.value}
+              </p>
+            </div>
+          ))}
         </div>
 
         {/* PROGRESS BAR */}
-        <div className="w-full bg-gray-800 h-2 rounded mb-6">
-
+        <div
+          className={`h-2 rounded-full overflow-hidden ${
+            theme === "dark" ? "bg-gray-800" : "bg-gray-200"
+          }`}
+        >
           <div
-            className="bg-blue-500 h-2 rounded transition-all duration-300"
-            style={{
-              width: `${completionRate}%`,
-            }}
-          ></div>
-
-        </div>
-
-        {/* SEARCH + SORT */}
-        <div className="flex flex-col md:flex-row gap-3 mb-6">
-
-          <input
-            type="text"
-            placeholder="Search tasks..."
-            value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
-            className="w-full bg-gray-800 p-3 rounded-lg
-            outline-none focus:ring-2
-            focus:ring-blue-500"
+            className="h-2 bg-blue-500 transition-all duration-300"
+            style={{ width: `${completionRate}%` }}
           />
-
-          <select
-            value={sort}
-            onChange={(e) =>
-              setSort(e.target.value)
-            }
-            className="bg-gray-800 p-3 rounded-lg
-            outline-none"
-          >
-            <option value="newest">
-              Newest
-            </option>
-
-            <option value="oldest">
-              Oldest
-            </option>
-
-            <option value="priority">
-              Priority
-            </option>
-
-            <option value="dueDate">
-              Due Date
-            </option>
-
-          </select>
-
         </div>
 
-        {/* CREATE TASK */}
-        <div className="bg-gray-900 p-4 rounded-xl flex flex-col md:flex-row gap-3 mb-6">
-
+        {/* INPUT SECTION */}
+        <div
+          className={`p-5 rounded-2xl border flex flex-col md:flex-row gap-3 ${
+            theme === "dark"
+              ? "bg-[#111827] border-gray-800"
+              : "bg-white border-gray-200"
+          }`}
+        >
           <input
             type="text"
-            placeholder="Enter task..."
+            placeholder="New task..."
             value={title}
-            onChange={(e) =>
-              setTitle(e.target.value)
-            }
-            className="w-full bg-gray-800 p-3 rounded-lg
-            outline-none focus:ring-2
-            focus:ring-blue-500"
+            onChange={(e) => setTitle(e.target.value)}
+            className={`flex-1 p-3 rounded-lg outline-none transition ${
+              theme === "dark"
+                ? "bg-gray-800 text-white"
+                : "bg-gray-100 text-gray-900"
+            }`}
           />
 
           <select
             value={priority}
-            onChange={(e) =>
-              setPriority(e.target.value)
-            }
-            className="bg-gray-800 p-3 rounded-lg"
+            onChange={(e) => setPriority(e.target.value)}
+            className="p-3 rounded-lg bg-gray-100 text-gray-900"
           >
-            <option value="low">
-              Low
-            </option>
-
-            <option value="medium">
-              Medium
-            </option>
-
-            <option value="high">
-              High
-            </option>
-
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
           </select>
 
           <input
             type="date"
             value={dueDate}
-            onChange={(e) =>
-              setDueDate(e.target.value)
-            }
-            className="bg-gray-800 p-3 rounded-lg"
+            onChange={(e) => setDueDate(e.target.value)}
+            className="p-3 rounded-lg bg-gray-100 text-gray-900"
           />
 
           <button
-            disabled={loading}
             onClick={createTask}
-            className="bg-blue-600 px-5 py-3 rounded-lg
-            hover:bg-blue-700 transition-all duration-200
-            active:scale-95 w-full md:w-auto"
+            disabled={loading}
+            className="px-5 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition active:scale-95"
           >
-            {loading ? "Loading..." : "Add"}
+            {loading ? "Adding..." : "Add"}
           </button>
-
         </div>
 
         {/* FILTERS */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-
-          {[
-            "all",
-            "active",
-            "completed",
-            "high",
-            "medium",
-            "low",
-          ].map((f) => (
-
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {["all", "active", "completed", "high", "medium", "low"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`
-              px-4 py-2 rounded-lg whitespace-nowrap
-              text-sm font-medium transition-all duration-200
-              active:scale-95
-
-              ${
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
                 filter === f
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-              }
-              `}
+                  : theme === "dark"
+                    ? "bg-gray-800 text-gray-300"
+                    : "bg-gray-200 text-gray-700"
+              }`}
             >
               {f.toUpperCase()}
             </button>
-
           ))}
-
         </div>
 
-        {/* TASKS */}
+        {/* TASK LIST */}
         <div className="space-y-3">
-
-          {loading && (
-            <p className="text-gray-400">
-              Loading tasks...
-            </p>
-          )}
-
-          {!loading &&
-            filteredTasks.length === 0 && (
-              <div className="text-gray-500 text-center mt-10">
-                No tasks found 🔥
-              </div>
-            )}
-
           {filteredTasks.map((task) => (
-
             <div
               key={task._id}
-              className="bg-gray-900 p-4 rounded-xl
-              flex flex-col md:flex-row md:items-center
-              md:justify-between gap-4
-              hover:bg-gray-800 transition duration-200
-              shadow-lg"
+              className={`p-4 rounded-xl border flex justify-between items-start gap-4 transition ${
+                theme === "dark"
+                  ? "bg-[#111827] border-gray-800"
+                  : "bg-white border-gray-200"
+              }`}
             >
-
               <div
-                onClick={() =>
-                  toggleTask(task._id)
-                }
+                onClick={() => toggleTask(task._id)}
                 className="cursor-pointer flex-1"
               >
-
-                <p
-                  className={`text-lg break-words ${
-                    task.completed
-                      ? "line-through text-gray-500 opacity-70"
-                      : ""
-                  }`}
-                >
-
-                  <span className="mr-2">
-                    {task.completed
-                      ? "✅"
-                      : "⬜"}
-                  </span>
-
-                  {task.title}
-
+                <p className="text-base font-medium flex items-center gap-2">
+                  {task.completed ? "✅" : "⬜"} {task.title}
                 </p>
 
-                <div className="text-sm text-gray-400 mt-2 flex flex-wrap gap-3">
-
-                  <span>
-                    Priority:
-                    <span className="text-white ml-1 capitalize">
-                      {task.priority}
-                    </span>
-                  </span>
+                <div className="text-xs text-gray-500 mt-2 flex gap-4 flex-wrap">
+                  <span>Priority: {task.priority}</span>
 
                   {task.dueDate && (
                     <span>
-                      Due:
-                      <span className="text-white ml-1">
-                        {new Date(
-                          task.dueDate
-                        ).toLocaleDateString()}
-                      </span>
+                      Due: {new Date(task.dueDate).toLocaleDateString()}
                     </span>
                   )}
-
                 </div>
-
               </div>
 
               <button
-                onClick={() =>
-                  deleteTask(task._id)
-                }
-                className="bg-red-600 px-4 py-2 rounded-lg
-                hover:bg-red-700 transition-all duration-200
-                active:scale-95 w-full md:w-auto"
+                onClick={() => deleteTask(task._id)}
+                className="text-sm px-3 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
               >
                 Delete
               </button>
-
             </div>
-
           ))}
-
         </div>
-
       </div>
-
     </div>
   );
 }
