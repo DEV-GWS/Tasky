@@ -6,12 +6,12 @@ const {
   getTasks,
   createTask,
   deleteTask,
-  toggleTask,
+  updateTask,
 } = require("../controllers/taskController");
 
 router.get("/", protect, getTasks);
 router.post("/", protect, createTask);
 router.delete("/:id", protect, deleteTask);
-router.patch("/:id", protect, toggleTask);
+router.patch("/:id", protect, updateTask);
 
 module.exports = router;
