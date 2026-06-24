@@ -88,7 +88,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-export const verifyToken = async (req, res) => {
+const verifyToken = async (req, res) => {
   res.json({
     valid: true,
     user: req.user,
@@ -98,4 +98,5 @@ export const verifyToken = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  verifyToken
 };

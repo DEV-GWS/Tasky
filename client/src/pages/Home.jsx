@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import TaskCard from "../components/TaskCard";
 import SearchBar from "../components/SearchBar";
@@ -9,8 +8,8 @@ import Header from "../components/Header";
 import DashboardCards from "../components/DashboardCards";
 import TaskForm from "../components/TaskForm";
 
-function Home() {
-  const navigate = useNavigate();
+function Home({theme, }) {
+
 
   // STATES
   const [tasks, setTasks] = useState([]);
@@ -20,7 +19,6 @@ function Home() {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("medium");
   const [loading, setLoading] = useState(false);
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
   const [editingTask, setEditingTask] = useState(null);
   const [editTitle, setEditTitle] = useState("");
@@ -36,14 +34,6 @@ function Home() {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-
-    toast.success("Logged out");
-
-    navigate("/login");
   };
 
   const fetchTasks = async () => {
@@ -130,13 +120,10 @@ function Home() {
       fetchTasks();
     }
   };
-  // theme switch and init Tasks
+  // init Tasks
   useEffect(() => {
-    document.documentElement.classList.remove("light", "dark");
-    document.documentElement.classList.add(theme);
-    localStorage.setItem("theme", theme);
     fetchTasks();
-  }, [theme]);
+  }, []);
 
   // FILTER + SEARCH + SORT
   const filteredTasks = tasks
@@ -251,8 +238,6 @@ function Home() {
       }`}
     >
       <div className="max-w-5xl mx-auto space-y-8">
-        <Header theme={theme} setTheme={setTheme} logout={logout} />
-
         <DashboardCards
           totalTasks={totalTasks}
           completedTasks={completedTasks}

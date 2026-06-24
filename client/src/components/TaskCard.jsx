@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 function TaskCard({
   task,
   theme,
@@ -15,12 +17,18 @@ function TaskCard({
   deleteTask,
 }) {
   return (
-    <div
+    <motion.div
       className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm ${
         theme === "dark"
           ? "bg-[#111827] border-gray-800 hover:border-gray-700"
           : "bg-white border-gray-200 hover:border-gray-300"
       }`}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{
+        duration: 0.25,
+      }}
     >
       {/* LEFT */}
       <div className="flex-1">
@@ -71,10 +79,7 @@ function TaskCard({
                 task.completed ? "line-through opacity-60 text-gray-500" : ""
               }`}
             >
-              <span
-                onClick={() => toggleTask(task)}
-                className="cursor-pointer"
-              >
+              <span onClick={() => toggleTask(task)} className="cursor-pointer">
                 {task.completed ? "✅" : "⬜"}
               </span>
               {task.title}
@@ -143,7 +148,7 @@ function TaskCard({
           </>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

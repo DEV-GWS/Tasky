@@ -5,6 +5,7 @@ const protect = require("../middleware/authMiddleware");
 const {
   registerUser,
   loginUser,
+  verifyToken
 } = require("../controllers/authController");
 
 router.get("/verify", protect, verifyToken);
