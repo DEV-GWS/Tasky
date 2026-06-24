@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { HiOutlineBars3 } from "react-icons/hi2";
 
 function TaskCard({
   task,
@@ -38,8 +39,6 @@ function TaskCard({
       layout
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
       whileDrag={{
         scale: 1.03,
       }}
@@ -158,6 +157,17 @@ function TaskCard({
           </>
         ) : (
           <>
+            <button
+              {...attributes}
+              {...listeners}
+              className={`p-2 rounded-lg cursor-grab active:cursor-grabbing transition ${
+                theme === "dark"
+                  ? "hover:bg-gray-700 text-gray-400"
+                  : "hover:bg-gray-200 text-gray-500"
+              }`}
+            >
+              <HiOutlineBars3 size={18} />
+            </button>
             <button
               onClick={() => startEdit(task)}
               className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"

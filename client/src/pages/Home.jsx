@@ -7,7 +7,7 @@ import FilterBar from "../components/FilterBar";
 import DashboardCards from "../components/DashboardCards";
 import TaskForm from "../components/TaskForm";
 
-import { DndContext, closestCenter } from "@dnd-kit/core";
+import { DndContext, closestCenter, DragOverlay } from "@dnd-kit/core";
 
 import {
   arrayMove,
@@ -18,6 +18,7 @@ import {
 function Home({ theme }) {
   // STATES
   const [tasks, setTasks] = useState([]);
+  const [activeTask, setActiveTask] = useState(null);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("manual");
@@ -184,6 +185,12 @@ function Home({ theme }) {
       return 0;
     });
 
+  const handleDragStart = (event) => {
+    const task = tasks.find((t) => t._id === event.active.id);
+
+    setActiveTask(task);
+  };
+
   const handleDragEnd = async (event) => {
     const { active, over } = event;
 
@@ -219,6 +226,8 @@ function Home({ theme }) {
       toast.error("Failed to save order");
 
       fetchTasks();
+    } finally {
+      setActiveTask(null);
     }
   };
 
@@ -329,6 +338,7 @@ function Home({ theme }) {
         {/* TASK LIST */}
         <DndContext
           collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
           <SortableContext
@@ -357,6 +367,27 @@ function Home({ theme }) {
               ))}
             </div>
           </SortableContext>
+          <DragOverlay>
+            {activeTask ? (
+              <div
+                className={`
+        p-4 rounded-xl border w-[300px]
+        shadow-2xl rotate-2 opacity-95
+        ${
+          theme === "dark"
+            ? "bg-[#111827] border-gray-700 text-white"
+            : "bg-white border-gray-200 text-gray-900"
+        }
+      `}
+              >
+                <p className="font-medium">{activeTask.title}</p>
+
+                <div className="text-xs text-gray-500 mt-2">
+                  {activeTask.priority}
+                </div>
+              </div>
+            ) : null}
+          </DragOverlay>
         </DndContext>
       </div>
     </div>
