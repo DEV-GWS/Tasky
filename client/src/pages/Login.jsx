@@ -1,10 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 function Login() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const verifyUser = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+
+      try {
+        await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/verify`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        toast.custom("Already Logged in");
+        navigate("/");
+      } catch (error) {
+        localStorage.removeItem("token");
+      }
+    };
+
+    verifyUser();
+  }, []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,8 +50,6 @@ function Login() {
       window.location.href = "/";
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login failed");
-
-      alert(JSON.stringify(error?.response?.data));
     }
   };
   return (
