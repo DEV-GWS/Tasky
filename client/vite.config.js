@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
@@ -10,6 +10,28 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
 
+      workbox: {
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.href.includes("/api/tasks"),
+
+            handler: "NetworkFirst",
+
+            options: {
+              cacheName: "tasks-api-cache",
+
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 86400,
+              },
+
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+        ],
+      },
       manifest: {
         name: "Task Manager",
         short_name: "Tasks",
