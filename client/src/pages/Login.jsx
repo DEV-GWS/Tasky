@@ -20,11 +20,9 @@ function Login() {
           password,
         },
       );
-
       localStorage.setItem("token", res.data.token);
       toast.success("Logged in successfully");
-
-      navigate("/");
+      window.location.href = "/";
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login failed");
 
