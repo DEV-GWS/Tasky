@@ -34,6 +34,7 @@ function SearchBar({
             : "bg-gray-100 text-gray-900"
         }`}
       >
+        <option value="manual">Manual</option>
         <option value="newest">Newest</option>
         <option value="oldest">Oldest</option>
         <option value="priority">Priority</option>

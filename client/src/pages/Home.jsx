@@ -4,18 +4,23 @@ import toast from "react-hot-toast";
 import TaskCard from "../components/TaskCard";
 import SearchBar from "../components/SearchBar";
 import FilterBar from "../components/FilterBar";
-import Header from "../components/Header";
 import DashboardCards from "../components/DashboardCards";
 import TaskForm from "../components/TaskForm";
 
-function Home({theme, }) {
+import { DndContext, closestCenter } from "@dnd-kit/core";
 
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
+function Home({ theme }) {
   // STATES
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("newest");
+  const [sort, setSort] = useState("manual");
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("medium");
   const [loading, setLoading] = useState(false);
@@ -151,6 +156,9 @@ function Home({theme, }) {
     })
     .filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
+      if (sort === "manual") {
+        return a.order - b.order;
+      }
       if (sort === "newest") {
         return new Date(b.createdAt) - new Date(a.createdAt);
       }
@@ -175,6 +183,44 @@ function Home({theme, }) {
 
       return 0;
     });
+
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    const oldIndex = tasks.findIndex((task) => task._id === active.id);
+
+    const newIndex = tasks.findIndex((task) => task._id === over.id);
+
+    const reordered = arrayMove(tasks, oldIndex, newIndex).map(
+      (task, index) => ({
+        ...task,
+        order: index,
+      }),
+    );
+    console.log(active.id, over.id);
+    setTasks(reordered);
+
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/tasks/reorder`,
+        {
+          tasks: reordered.map((task) => ({
+            id: task._id,
+            order: task.order,
+          })),
+        },
+        config,
+      );
+    } catch (error) {
+      toast.error("Failed to save order");
+
+      fetchTasks();
+    }
+  };
 
   // DASHBOARD STATS
   const totalTasks = tasks.length;
@@ -225,7 +271,7 @@ function Home({theme, }) {
 
       cancelEdit();
       toast.success("Task updated");
-    } catch (err) {
+    } catch (error) {
       toast.error("Update failed");
     }
   };
@@ -281,27 +327,37 @@ function Home({theme, }) {
         <FilterBar filter={filter} setFilter={setFilter} theme={theme} />
 
         {/* TASK LIST */}
-        <div className="space-y-3">
-          {filteredTasks.map((task) => (
-            <TaskCard
-              key={task._id}
-              task={task}
-              theme={theme}
-              editingTask={editingTask}
-              editTitle={editTitle}
-              editPriority={editPriority}
-              editDueDate={editDueDate}
-              setEditTitle={setEditTitle}
-              setEditPriority={setEditPriority}
-              setEditDueDate={setEditDueDate}
-              toggleTask={toggleTask}
-              startEdit={startEdit}
-              saveEdit={saveEdit}
-              cancelEdit={cancelEdit}
-              deleteTask={deleteTask}
-            />
-          ))}
-        </div>
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={tasks.map((task) => task._id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-3">
+              {filteredTasks.map((task) => (
+                <TaskCard
+                  key={task._id}
+                  task={task}
+                  theme={theme}
+                  editingTask={editingTask}
+                  editTitle={editTitle}
+                  editPriority={editPriority}
+                  editDueDate={editDueDate}
+                  setEditTitle={setEditTitle}
+                  setEditPriority={setEditPriority}
+                  setEditDueDate={setEditDueDate}
+                  toggleTask={toggleTask}
+                  startEdit={startEdit}
+                  saveEdit={saveEdit}
+                  cancelEdit={cancelEdit}
+                  deleteTask={deleteTask}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       </div>
     </div>
   );

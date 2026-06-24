@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 function TaskCard({
   task,
@@ -16,16 +18,40 @@ function TaskCard({
   cancelEdit,
   deleteTask,
 }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: task._id,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition: transition || "transform 200ms ease",
+  };
+
   return (
     <motion.div
-      className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm ${
-        theme === "dark"
-          ? "bg-[#111827] border-gray-800 hover:border-gray-700"
-          : "bg-white border-gray-200 hover:border-gray-300"
-      }`}
+      layout
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      whileDrag={{
+        scale: 1.03,
+      }}
+      className={`p-5 rounded-2xl border transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm  touch-none
+    transition-shadow ${
+      theme === "dark"
+        ? "bg-[#111827] border-gray-800 hover:border-gray-700"
+        : "bg-white border-gray-200 hover:border-gray-300"
+    } ${isDragging ? "z-50 shadow-2xl rotate-1 opacity-90" : ""}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -40 }}
+      exit={{ opacity: 0 }}
       transition={{
         duration: 0.25,
       }}

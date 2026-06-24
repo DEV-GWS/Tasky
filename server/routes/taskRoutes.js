@@ -7,11 +7,14 @@ const {
   createTask,
   deleteTask,
   updateTask,
+  reorderTasks,
 } = require("../controllers/taskController");
 
 router.get("/", protect, getTasks);
 router.post("/", protect, createTask);
 router.delete("/:id", protect, deleteTask);
 router.patch("/:id", protect, updateTask);
+router.put("/reorder", protect, reorderTasks);
+
 
 module.exports = router;
