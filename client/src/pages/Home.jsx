@@ -5,6 +5,9 @@ import toast from "react-hot-toast";
 import TaskCard from "../components/TaskCard";
 import SearchBar from "../components/SearchBar";
 import FilterBar from "../components/FilterBar";
+import Header from "../components/Header";
+import DashboardCards from "../components/DashboardCards";
+import TaskForm from "../components/TaskForm";
 
 function Home() {
   const navigate = useNavigate();
@@ -248,75 +251,15 @@ function Home() {
       }`}
     >
       <div className="max-w-5xl mx-auto space-y-8">
-        {/* HEADER */}
-        <div
-          className={`flex flex-col md:flex-row md:items-center md:justify-between gap-6 p-6 rounded-2xl shadow-sm border ${
-            theme === "dark"
-              ? "bg-[#111827] border-gray-800"
-              : "bg-white border-gray-200"
-          }`}
-        >
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Task Manager
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Organize your tasks cleanly and efficiently
-            </p>
-          </div>
+        <Header theme={theme} setTheme={setTheme} logout={logout} />
 
-          <div className="flex gap-3">
-            <button
-              onClick={logout}
-              className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition active:scale-95"
-            >
-              Logout
-            </button>
-
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition active:scale-95 ${
-                theme === "dark"
-                  ? "bg-gray-700 hover:bg-gray-600 text-white"
-                  : "bg-gray-200 hover:bg-gray-300 text-gray-800"
-              }`}
-            >
-              {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
-            </button>
-          </div>
-        </div>
-
-        {/* DASHBOARD */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { label: "Total", value: totalTasks },
-            {
-              label: "Completed",
-              value: completedTasks,
-              color: "text-green-500",
-            },
-            { label: "Active", value: activeTasks, color: "text-yellow-500" },
-            {
-              label: "Progress",
-              value: `${completionRate}%`,
-              color: "text-blue-500",
-            },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className={`p-5 rounded-xl border shadow-sm ${
-                theme === "dark"
-                  ? "bg-[#111827] border-gray-800"
-                  : "bg-white border-gray-200"
-              }`}
-            >
-              <p className="text-sm text-gray-500">{item.label}</p>
-              <p className={`text-2xl font-semibold mt-1 ${item.color || ""}`}>
-                {item.value}
-              </p>
-            </div>
-          ))}
-        </div>
+        <DashboardCards
+          totalTasks={totalTasks}
+          completedTasks={completedTasks}
+          activeTasks={activeTasks}
+          completionRate={completionRate}
+          theme={theme}
+        />
 
         {/* PROGRESS BAR */}
         <div
@@ -330,51 +273,17 @@ function Home() {
           />
         </div>
 
-        {/* INPUT SECTION */}
-        <div
-          className={`p-5 rounded-2xl border flex flex-col md:flex-row gap-3 ${
-            theme === "dark"
-              ? "bg-[#111827] border-gray-800"
-              : "bg-white border-gray-200"
-          }`}
-        >
-          <input
-            type="text"
-            placeholder="New task..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className={`flex-1 p-3 rounded-lg outline-none transition ${
-              theme === "dark"
-                ? "bg-gray-800 text-white"
-                : "bg-gray-100 text-gray-900"
-            }`}
-          />
-
-          <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            className="p-3 rounded-lg bg-gray-100 text-gray-900"
-          >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-          </select>
-
-          <input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            className="p-3 rounded-lg bg-gray-100 text-gray-900"
-          />
-
-          <button
-            onClick={createTask}
-            disabled={loading}
-            className="px-5 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition active:scale-95"
-          >
-            {loading ? "Adding..." : "Add"}
-          </button>
-        </div>
+        <TaskForm
+          title={title}
+          setTitle={setTitle}
+          priority={priority}
+          setPriority={setPriority}
+          dueDate={dueDate}
+          setDueDate={setDueDate}
+          createTask={createTask}
+          loading={loading}
+          theme={theme}
+        />
 
         <SearchBar
           search={search}
