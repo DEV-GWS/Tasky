@@ -14,6 +14,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import TaskSkeleton from "../components/TaskSkeleton";
 
 function Home({ theme }) {
   // STATES
@@ -333,7 +334,12 @@ function Home({ theme }) {
           theme={theme}
         />
 
-        <FilterBar filter={filter} setFilter={setFilter} theme={theme} tasks={tasks} />
+        <FilterBar
+          filter={filter}
+          setFilter={setFilter}
+          theme={theme}
+          tasks={tasks}
+        />
 
         {/* TASK LIST */}
         <DndContext
@@ -348,20 +354,10 @@ function Home({ theme }) {
             {/* TASK LIST */}
             <div className="space-y-3">
               {loading ? (
-                <div
-                  className={`rounded-2xl border p-10 text-center ${
-                    theme === "dark"
-                      ? "bg-[#111827] border-gray-800"
-                      : "bg-white border-gray-200"
-                  }`}
-                >
-                  <p
-                    className={
-                      theme === "dark" ? "text-gray-400" : "text-gray-500"
-                    }
-                  >
-                    Loading tasks...
-                  </p>
+                <div className="space-y-3">
+                  {[...Array(5)].map((_, i) => (
+                    <TaskSkeleton key={i} theme={theme} />
+                  ))}
                 </div>
               ) : filteredTasks.length === 0 ? (
                 <div
