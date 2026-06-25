@@ -345,26 +345,93 @@ function Home({ theme }) {
             items={tasks.map((task) => task._id)}
             strategy={verticalListSortingStrategy}
           >
+            {/* TASK LIST */}
             <div className="space-y-3">
-              {filteredTasks.map((task) => (
-                <TaskCard
-                  key={task._id}
-                  task={task}
-                  theme={theme}
-                  editingTask={editingTask}
-                  editTitle={editTitle}
-                  editPriority={editPriority}
-                  editDueDate={editDueDate}
-                  setEditTitle={setEditTitle}
-                  setEditPriority={setEditPriority}
-                  setEditDueDate={setEditDueDate}
-                  toggleTask={toggleTask}
-                  startEdit={startEdit}
-                  saveEdit={saveEdit}
-                  cancelEdit={cancelEdit}
-                  deleteTask={deleteTask}
-                />
-              ))}
+              {loading ? (
+                <div
+                  className={`
+        rounded-2xl border p-10 text-center
+        ${
+          theme === "dark"
+            ? "bg-[#111827] border-gray-800"
+            : "bg-white border-gray-200"
+        }
+      `}
+                >
+                  <p
+                    className={
+                      theme === "dark" ? "text-gray-400" : "text-gray-500"
+                    }
+                  >
+                    Loading tasks...
+                  </p>
+                </div>
+              ) : filteredTasks.length === 0 ? (
+                <div
+                  className={`
+        rounded-2xl border p-10 text-center transition
+        ${
+          theme === "dark"
+            ? "bg-[#111827] border-gray-800"
+            : "bg-white border-gray-200"
+        }
+      `}
+                >
+                  <div className="text-5xl mb-4">
+                    {search
+                      ? "🔍"
+                      : filter === "completed"
+                        ? "🎉"
+                        : filter === "active"
+                          ? "🛌"
+                          : "📭"}
+                  </div>
+
+                  <h3 className="text-xl font-semibold mb-2">
+                    {search
+                      ? "No matching tasks"
+                      : filter === "completed"
+                        ? "No completed tasks yet"
+                        : filter === "active"
+                          ? "No active tasks"
+                          : "Your task list is empty"}
+                  </h3>
+
+                  <p
+                    className={
+                      theme === "dark" ? "text-gray-400" : "text-gray-500"
+                    }
+                  >
+                    {search
+                      ? "Try a different keyword or filter."
+                      : filter === "completed"
+                        ? "Complete some tasks to see them here."
+                        : filter === "active"
+                          ? "Looks like everything is done 😄"
+                          : "Start by creating your first task."}
+                  </p>
+                </div>
+              ) : (
+                filteredTasks.map((task) => (
+                  <TaskCard
+                    key={task._id}
+                    task={task}
+                    theme={theme}
+                    toggleTask={toggleTask}
+                    deleteTask={deleteTask}
+                    editingTask={editingTask}
+                    editTitle={editTitle}
+                    setEditTitle={setEditTitle}
+                    editPriority={editPriority}
+                    setEditPriority={setEditPriority}
+                    editDueDate={editDueDate}
+                    setEditDueDate={setEditDueDate}
+                    startEdit={startEdit}
+                    cancelEdit={cancelEdit}
+                    saveEdit={saveEdit}
+                  />
+                ))
+              )}
             </div>
           </SortableContext>
           <DragOverlay>

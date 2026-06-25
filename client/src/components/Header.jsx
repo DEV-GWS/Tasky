@@ -16,14 +16,6 @@ function Header({ theme, setTheme, logout, showLogout = false }) {
       </div>
 
       <div className="flex gap-3">
-        {showLogout && (
-          <button
-            onClick={logout}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition active:scale-95"
-          >
-            Logout
-          </button>
-        )}
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition active:scale-95 ${
@@ -34,6 +26,14 @@ function Header({ theme, setTheme, logout, showLogout = false }) {
         >
           {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
         </button>
+        {showLogout && (
+          <button
+            onClick={logout}
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition active:scale-95"
+          >
+            Logout
+          </button>
+        )}
       </div>
     </div>
   );
