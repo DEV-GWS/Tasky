@@ -20,9 +20,18 @@ function Home({ theme }) {
   // STATES
   const [tasks, setTasks] = useState([]);
   const [activeTask, setActiveTask] = useState(null);
-  const [filter, setFilter] = useState("all");
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState("manual");
+  const [filter, setFilter] = useState(localStorage.getItem("filter") || "all");
+  useEffect(() => {
+    localStorage.setItem("filter", filter);
+  }, [filter]);
+  const [search, setSearch] = useState(localStorage.getItem("search") || "");
+  useEffect(() => {
+    localStorage.setItem("search", search);
+  }, [search]);
+  const [sort, setSort] = useState(localStorage.getItem("sort") || "manual");
+  useEffect(() => {
+    localStorage.setItem("sort", sort);
+  }, [sort]);
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("medium");
   const [loading, setLoading] = useState(false);
