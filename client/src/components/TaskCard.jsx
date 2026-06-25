@@ -33,7 +33,18 @@ function TaskCard({
     transform: CSS.Transform.toString(transform),
     transition: transition || "transform 200ms ease",
   };
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
+  const taskDate = new Date(task.dueDate);
+  taskDate.setHours(0, 0, 0, 0);
+
+  const isOverdue = task.dueDate && taskDate < today && !task.completed;
+
+  const isToday =
+    task.dueDate && taskDate.getTime() === today.getTime() && !task.completed;
+
+  const isUpcoming = task.dueDate && taskDate > today && !task.completed;
   return (
     <motion.div
       layout
@@ -126,7 +137,34 @@ function TaskCard({
                 </span>
               </span>
               {task.dueDate && (
-                <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
+                <span
+                  className={`
+    px-2 py-1 rounded-full text-xs font-medium
+    ${
+      task.completed
+        ? theme === "dark"
+          ? "bg-gray-700 text-gray-300"
+          : "bg-gray-200 text-gray-600"
+        : isOverdue
+          ? "bg-red-100 text-red-600"
+          : isToday
+            ? "bg-yellow-100 text-yellow-700"
+            : isUpcoming
+              ? "bg-blue-100 text-blue-700"
+              : ""
+    }
+  `}
+                >
+                  {task.completed
+                    ? "Completed"
+                    : isOverdue
+                      ? "Overdue"
+                      : isToday
+                        ? "Today"
+                        : "Upcoming"}
+                  {" • "}
+                  {new Date(task.dueDate).toLocaleDateString()}
+                </span>
               )}
             </div>
           </div>
