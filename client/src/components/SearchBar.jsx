@@ -1,10 +1,22 @@
-function SearchBar({
-  search,
-  setSearch,
-  sort,
-  setSort,
-  theme,
-}) {
+import { useEffect, useRef } from "react";
+
+function SearchBar({ search, setSearch, sort, setSort, theme }) {
+  const searchRef = useRef(null);
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "/") {
+        e.preventDefault();
+
+        searchRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   return (
     <div
       className={`p-5 rounded-2xl border flex flex-col md:flex-row gap-3 ${
@@ -15,8 +27,9 @@ function SearchBar({
     >
       <input
         type="text"
-        placeholder="Search tasks..."
+        placeholder="Search tasks... ( / )"
         value={search}
+        ref={searchRef}
         onChange={(e) => setSearch(e.target.value)}
         className={`flex-1 p-3 rounded-lg outline-none transition ${
           theme === "dark"

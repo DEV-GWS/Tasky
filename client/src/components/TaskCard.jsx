@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { HiOutlineBars3 } from "react-icons/hi2";
+import { useEffect } from "react";
 
 function TaskCard({
   task,
@@ -45,6 +46,20 @@ function TaskCard({
     task.dueDate && taskDate.getTime() === today.getTime() && !task.completed;
 
   const isUpcoming = task.dueDate && taskDate > today && !task.completed;
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && editingTask === task._id) {
+        cancelEdit();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [editingTask, task._id, cancelEdit]);
   return (
     <motion.div
       layout
