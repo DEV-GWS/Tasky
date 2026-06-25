@@ -15,6 +15,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import TaskSkeleton from "../components/TaskSkeleton";
+import { addToQueue, clearQueue, getQueue } from "../utils/offlineQueue";
 
 function Home({ theme }) {
   // STATES
@@ -72,8 +73,49 @@ function Home({ theme }) {
     if (!title.trim()) {
       return toast.error("Task title required");
     }
+
+    // OFFLINE MODE
+    if (!navigator.onLine) {
+      const offlineTask = {
+        _id: Date.now().toString(),
+
+        title,
+
+        priority,
+
+        dueDate,
+
+        completed: false,
+
+        offline: true,
+      };
+
+      // instant UI update
+      setTasks((prev) => [offlineTask, ...prev]);
+
+      // save action to queue
+      addToQueue({
+        type: "create",
+        payload: {
+          title,
+          priority,
+          dueDate,
+        },
+      });
+
+      toast.success("Task saved offline");
+
+      setTitle("");
+      setPriority("medium");
+      setDueDate(today);
+
+      return;
+    }
+
+    // ONLINE MODE
     try {
       setLoading(true);
+
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/tasks`,
         {
@@ -83,10 +125,13 @@ function Home({ theme }) {
         },
         config,
       );
+
       toast.success("Task added");
+
       setTitle("");
       setPriority("medium");
       setDueDate(today);
+
       fetchTasks();
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to create task");
@@ -94,6 +139,40 @@ function Home({ theme }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const syncQueue = async () => {
+      const queue = getQueue();
+
+      if (!queue.length) return;
+
+      try {
+        for (const action of queue) {
+          if (action.type === "create") {
+            await axios.post(
+              `${import.meta.env.VITE_API_URL}/api/tasks`,
+              action.payload,
+              config,
+            );
+          }
+        }
+
+        clearQueue();
+
+        toast.success("Offline tasks synced");
+
+        fetchTasks();
+      } catch (error) {
+        console.log("Sync failed");
+      }
+    };
+
+    window.addEventListener("online", syncQueue);
+
+    return () => {
+      window.removeEventListener("online", syncQueue);
+    };
+  }, [tasks, config, fetchTasks]);
 
   const deleteTask = async (id) => {
     try {
