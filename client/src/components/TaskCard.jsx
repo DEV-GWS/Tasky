@@ -137,19 +137,20 @@ function TaskCard({
             </p>
 
             <div className="text-xs md:text-sm text-gray-500 mt-3 flex flex-wrap gap-4">
-              <span className="capitalize">
-                Priority:
-                <span
-                  className={`ml-1 font-medium ${
-                    task.priority === "high"
-                      ? "text-red-500"
-                      : task.priority === "medium"
-                        ? "text-yellow-500"
-                        : "text-green-500"
-                  }`}
-                >
-                  {task.priority}
-                </span>
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                  task.priority === "high"
+                    ? "bg-red-100 text-red-600"
+                    : task.priority === "medium"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-green-100 text-green-700"
+                }
+              `}>
+                {task.priority === "high"
+                  ? "🔴 High"
+                  : task.priority === "medium"
+                    ? "🟡 Medium"
+                    : "🟢 Low"}
               </span>
               {task.dueDate && (
                 <span

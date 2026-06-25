@@ -333,7 +333,7 @@ function Home({ theme }) {
           theme={theme}
         />
 
-        <FilterBar filter={filter} setFilter={setFilter} theme={theme} />
+        <FilterBar filter={filter} setFilter={setFilter} theme={theme} tasks={tasks} />
 
         {/* TASK LIST */}
         <DndContext
@@ -349,14 +349,11 @@ function Home({ theme }) {
             <div className="space-y-3">
               {loading ? (
                 <div
-                  className={`
-        rounded-2xl border p-10 text-center
-        ${
-          theme === "dark"
-            ? "bg-[#111827] border-gray-800"
-            : "bg-white border-gray-200"
-        }
-      `}
+                  className={`rounded-2xl border p-10 text-center ${
+                    theme === "dark"
+                      ? "bg-[#111827] border-gray-800"
+                      : "bg-white border-gray-200"
+                  }`}
                 >
                   <p
                     className={
@@ -368,14 +365,11 @@ function Home({ theme }) {
                 </div>
               ) : filteredTasks.length === 0 ? (
                 <div
-                  className={`
-        rounded-2xl border p-10 text-center transition
-        ${
-          theme === "dark"
-            ? "bg-[#111827] border-gray-800"
-            : "bg-white border-gray-200"
-        }
-      `}
+                  className={`rounded-2xl border p-10 text-center transition ${
+                    theme === "dark"
+                      ? "bg-[#111827] border-gray-800"
+                      : "bg-white border-gray-200"
+                  }`}
                 >
                   <div className="text-5xl mb-4">
                     {search
