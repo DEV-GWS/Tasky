@@ -68,6 +68,10 @@ function Home({ theme, syncStatus, setSyncStatus }) {
   };
 
   const fetchTasks = async () => {
+    if (!navigator.onLine) {
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await axios.get(
@@ -76,6 +80,11 @@ function Home({ theme, syncStatus, setSyncStatus }) {
       );
 
       setTasks(res.data);
+       // save latest online tasks
+    localStorage.setItem(
+      "cachedTasks",
+      JSON.stringify(res.data),
+    );
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch tasks");
     } finally {
