@@ -19,6 +19,8 @@ function TaskCard({
   saveEdit,
   cancelEdit,
   deleteTask,
+  editCategory,
+  setEditCategory,
 }) {
   const {
     attributes,
@@ -110,7 +112,6 @@ function TaskCard({
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
               </select>
-
               <input
                 type="date"
                 value={editDueDate}
@@ -120,7 +121,21 @@ function TaskCard({
                     ? "bg-gray-800 text-white"
                     : "bg-gray-100 text-gray-900"
                 }`}
-              />
+              />{" "}
+              <select
+                value={editCategory}
+                onChange={(e) => setEditCategory(e.target.value)}
+                className={`p-3 rounded-lg outline-none transition ${
+                  theme === "dark"
+                    ? "bg-gray-800 text-white"
+                    : "bg-gray-100 text-gray-900"
+                }`}
+              >
+                <option value="work">💼 Work</option>
+                <option value="study"> 📚 Study </option>
+                <option value="personal"> 🏠 Personal </option>
+                <option value="project"> 🚀 Project </option>
+              </select>
             </div>
           </div>
         ) : (
@@ -130,21 +145,28 @@ function TaskCard({
                 task.completed ? "line-through opacity-60 text-gray-500" : ""
               }`}
             >
-              
               <span onClick={() => toggleTask(task)} className="cursor-pointer">
                 {task.completed ? "✅" : "⬜"}
               </span>
               {task.title}
               {task.offline && (
-                <span
-                  className="text-[10px] px-2 py-1 rounded-full bg-orange-100 text-orange-700 font-semibold"
-                >
+                <span className="text-[10px] px-2 py-1 rounded-full bg-orange-100 text-orange-700 font-semibold">
                   Offline
                 </span>
               )}
             </p>
 
             <div className="text-xs md:text-sm text-gray-500 mt-3 flex flex-wrap gap-4">
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                  task.category === "work" ? "bg-blue-100 text-blue-700" : task.category === "study" ?
+                  "bg-purple-100 text-purple-700" : task.category === "project" ? 
+                  "bg-orange-100 text-orange-700" : "bg-green-100 text-green-700"
+                }`}
+              >
+                {task.category === "work" ? "💼 Work" : task.category === "study" ? "📚 Study"
+                    : task.category === "project" ? "🚀 Project" : "🏠 Personal"}
+              </span>
               <span
                 className={`px-2 py-1 rounded-full text-xs font-semibold ${
                   task.priority === "high"
@@ -163,30 +185,13 @@ function TaskCard({
               </span>
               {task.dueDate && (
                 <span
-                  className={`
-    px-2 py-1 rounded-full text-xs font-medium
-    ${
-      task.completed
-        ? theme === "dark"
-          ? "bg-gray-700 text-gray-300"
-          : "bg-gray-200 text-gray-600"
-        : isOverdue
-          ? "bg-red-100 text-red-600"
-          : isToday
-            ? "bg-yellow-100 text-yellow-700"
-            : isUpcoming
-              ? "bg-blue-100 text-blue-700"
-              : ""
-    }
-  `}
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    task.completed ? theme === "dark" ? "bg-gray-700 text-gray-300" : 
+                    "bg-gray-200 text-gray-600" : isOverdue ? "bg-red-100 text-red-600" : isToday ? 
+                    "bg-yellow-100 text-yellow-700" : isUpcoming ? "bg-blue-100 text-blue-700" : ""
+                  }`}
                 >
-                  {task.completed
-                    ? "Completed"
-                    : isOverdue
-                      ? "Overdue"
-                      : isToday
-                        ? "Today"
-                        : "Upcoming"}
+                  {task.completed ? "Completed" : isOverdue ? "Overdue" : isToday ? "Today" : "Upcoming"}
                   {" • "}
                   {new Date(task.dueDate).toLocaleDateString()}
                 </span>

@@ -1,9 +1,4 @@
-function FilterBar({
-  filter,
-  setFilter,
-  theme,
-  tasks,
-}) {
+function FilterBar({ filter, setFilter, theme, tasks }) {
   const filters = [
     {
       key: "all",
@@ -34,6 +29,27 @@ function FilterBar({
       key: "low",
       label: "LOW",
       count: tasks.filter((t) => t.priority === "low").length,
+    },
+    // CATEGORIES
+    {
+      key: "work",
+      label: "💼 WORK",
+      count: tasks.filter((t) => t.category === "work").length,
+    },
+    {
+      key: "study",
+      label: "📚 STUDY",
+      count: tasks.filter((t) => t.category === "study").length,
+    },
+    {
+      key: "personal",
+      label: "🏠 PERSONAL",
+      count: tasks.filter((t) => t.category === "personal").length,
+    },
+    {
+      key: "project",
+      label: "🚀 PROJECT",
+      count: tasks.filter((t) => t.category === "project").length,
     },
   ];
 

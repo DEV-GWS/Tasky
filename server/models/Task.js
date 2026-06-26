@@ -32,6 +32,11 @@ const taskSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    category: {
+      type: String,
+      enum: ["work", "study", "personal", "project"],
+      default: "personal",
+    },
   },
   { timestamps: true },
 );

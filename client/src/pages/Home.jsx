@@ -47,6 +47,11 @@ function Home({ theme, syncStatus, setSyncStatus }) {
   useEffect(() => {
     localStorage.setItem("sort", sort);
   }, [sort]);
+
+  const [category, setCategory] = useState("personal");
+
+  const [editCategory, setEditCategory] = useState("personal");
+
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("medium");
   const [loading, setLoading] = useState(false);
@@ -80,11 +85,8 @@ function Home({ theme, syncStatus, setSyncStatus }) {
       );
 
       setTasks(res.data);
-       // save latest online tasks
-    localStorage.setItem(
-      "cachedTasks",
-      JSON.stringify(res.data),
-    );
+      // save latest online tasks
+      localStorage.setItem("cachedTasks", JSON.stringify(res.data));
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to fetch tasks");
     } finally {
@@ -101,15 +103,11 @@ function Home({ theme, syncStatus, setSyncStatus }) {
     if (!navigator.onLine) {
       const offlineTask = {
         _id: Date.now().toString(),
-
         title,
-
         priority,
-
         dueDate,
-
+        category,
         completed: false,
-
         offline: true,
       };
 
@@ -131,7 +129,7 @@ function Home({ theme, syncStatus, setSyncStatus }) {
       setTitle("");
       setPriority("medium");
       setDueDate(today);
-
+      setCategory("personal");
       return;
     }
 
@@ -145,6 +143,7 @@ function Home({ theme, syncStatus, setSyncStatus }) {
           title,
           priority,
           dueDate,
+          category,
         },
         config,
       );
@@ -154,6 +153,7 @@ function Home({ theme, syncStatus, setSyncStatus }) {
       setTitle("");
       setPriority("medium");
       setDueDate(today);
+      setCategory("personal");
 
       fetchTasks();
     } catch (error) {
@@ -198,7 +198,7 @@ function Home({ theme, syncStatus, setSyncStatus }) {
     return () => {
       window.removeEventListener("online", syncQueue);
     };
-  }, [tasks, config, fetchTasks]);
+  }, [tasks, fetchTasks, setSyncStatus]);
 
   const deleteTask = async (id) => {
     try {
@@ -275,7 +275,22 @@ function Home({ theme, syncStatus, setSyncStatus }) {
       if (filter === "low") {
         return task.priority === "low";
       }
+      // CATEGORY FILTERS
+      if (filter === "work") {
+        return task.category === "work";
+      }
 
+      if (filter === "study") {
+        return task.category === "study";
+      }
+
+      if (filter === "personal") {
+        return task.category === "personal";
+      }
+
+      if (filter === "project") {
+        return task.category === "project";
+      }
       return true;
     })
     .filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
@@ -367,6 +382,7 @@ function Home({ theme, syncStatus, setSyncStatus }) {
     setEditTitle(task.title);
     setEditPriority(task.priority);
     setEditDueDate(task.dueDate?.split("T")[0] || today);
+    setEditCategory(task.category || "personal");
   };
 
   const cancelEdit = () => {
@@ -384,6 +400,7 @@ function Home({ theme, syncStatus, setSyncStatus }) {
           title: editTitle,
           priority: editPriority,
           dueDate: editDueDate,
+          category: editCategory,
         },
         config,
       );
@@ -396,6 +413,7 @@ function Home({ theme, syncStatus, setSyncStatus }) {
                 title: editTitle,
                 priority: editPriority,
                 dueDate: editDueDate,
+                category: editCategory,
               }
             : t,
         ),
@@ -446,6 +464,8 @@ function Home({ theme, syncStatus, setSyncStatus }) {
           createTask={createTask}
           loading={loading}
           theme={theme}
+          category={category}
+          setCategory={setCategory}
         />
 
         <SearchBar
@@ -541,6 +561,8 @@ function Home({ theme, syncStatus, setSyncStatus }) {
                     startEdit={startEdit}
                     cancelEdit={cancelEdit}
                     saveEdit={saveEdit}
+                    editCategory={editCategory}
+                    setEditCategory={setEditCategory}
                   />
                 ))
               )}

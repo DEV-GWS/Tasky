@@ -8,6 +8,8 @@ function TaskForm({
   createTask,
   loading,
   theme,
+  category,
+  setCategory
 }) {
   return (
     <div
@@ -42,7 +44,17 @@ function TaskForm({
         <option value="medium">Medium</option>
         <option value="high">High</option>
       </select>
-
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        className={`p-3 rounded-lg outline-none transition ${theme === "dark" ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"}
+  `}
+      >
+        <option value="work">💼 Work</option>
+        <option value="study">📚 Study</option>
+        <option value="personal">🏠 Personal</option>
+        <option value="project">🚀 Project</option>
+      </select>
       <input
         type="date"
         value={dueDate}
