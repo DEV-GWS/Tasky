@@ -17,11 +17,23 @@ import {
 import TaskSkeleton from "../components/TaskSkeleton";
 import { addToQueue, clearQueue, getQueue } from "../utils/offlineQueue";
 
-function Home({ theme }) {
+function Home({ theme, syncStatus, setSyncStatus }) {
   // task look from cache for offline purposes
   const [tasks, setTasks] = useState(() => {
     return JSON.parse(localStorage.getItem("cachedTasks") || "[]");
   });
+
+  useEffect(() => {
+    const goOnline = () => setSyncStatus("online");
+    const goOffline = () => setSyncStatus("offline");
+    window.addEventListener("online", goOnline);
+    window.addEventListener("offline", goOffline);
+
+    return () => {
+      window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
+    };
+  }, []);
   const [activeTask, setActiveTask] = useState(null);
   const [filter, setFilter] = useState(localStorage.getItem("filter") || "all");
   useEffect(() => {
@@ -144,6 +156,7 @@ function Home({ theme }) {
 
   useEffect(() => {
     const syncQueue = async () => {
+      setSyncStatus("syncing");
       const queue = getQueue();
 
       if (!queue.length) return;
@@ -162,6 +175,10 @@ function Home({ theme }) {
         clearQueue();
         await fetchTasks();
         toast.success("Offline tasks synced");
+        setSyncStatus("synced");
+        setTimeout(() => {
+          setSyncStatus("online");
+        }, 2000);
       } catch (error) {
         console.log("Sync failed");
       }

@@ -1,4 +1,6 @@
-function Header({ theme, setTheme, logout, showLogout = false }) {
+import SyncStatus from "./SyncStatus";
+
+function Header({ theme, setTheme, logout, syncStatus, showLogout = false }) {
   return (
     <div
       className={`flex flex-col md:flex-row md:items-center md:justify-between gap-6 p-6 rounded-2xl shadow-sm border ${
@@ -15,7 +17,8 @@ function Header({ theme, setTheme, logout, showLogout = false }) {
         </p>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex items-center gap-3">
+        <SyncStatus syncStatus={syncStatus} />
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition active:scale-95 ${

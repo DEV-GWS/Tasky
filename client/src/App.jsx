@@ -38,7 +38,9 @@ function App() {
   const navigate = useNavigate();
 
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-
+  const [syncStatus, setSyncStatus] = useState(
+    navigator.onLine ? "online" : "offline",
+  );
   //setup init and update theme
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
@@ -62,7 +64,7 @@ function App() {
       <Routes location={location} key={location.pathname}>
         <Route
           element={
-            <MainLayout theme={theme} setTheme={setTheme} logout={logout}  />
+            <MainLayout theme={theme} setTheme={setTheme} logout={logout} syncStatus={syncStatus} />
           }
         >
           <Route
@@ -88,7 +90,7 @@ function App() {
             element={
               token ? (
                 <PageWrapper>
-                  <Home theme={theme} />
+                  <Home theme={theme} syncStatus={syncStatus} setSyncStatus={setSyncStatus} />
                 </PageWrapper>
               ) : (
                 <Navigate to="/login" />

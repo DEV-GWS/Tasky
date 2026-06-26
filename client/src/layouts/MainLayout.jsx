@@ -1,12 +1,8 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 
-function MainLayout({
-  theme,
-  setTheme,
-  logout,
-}) {
-    const location = useLocation();
+function MainLayout({ theme, setTheme, logout, syncStatus }) {
+  const location = useLocation();
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
@@ -20,6 +16,7 @@ function MainLayout({
           theme={theme}
           setTheme={setTheme}
           logout={logout}
+          syncStatus={syncStatus}
           showLogout={location.pathname === "/"}
         />
 
