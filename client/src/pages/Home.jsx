@@ -18,8 +18,10 @@ import TaskSkeleton from "../components/TaskSkeleton";
 import { addToQueue, clearQueue, getQueue } from "../utils/offlineQueue";
 
 function Home({ theme }) {
-  // STATES
-  const [tasks, setTasks] = useState([]);
+  // task look from cache for offline purposes
+  const [tasks, setTasks] = useState(() => {
+    return JSON.parse(localStorage.getItem("cachedTasks") || "[]");
+  });
   const [activeTask, setActiveTask] = useState(null);
   const [filter, setFilter] = useState(localStorage.getItem("filter") || "all");
   useEffect(() => {
@@ -158,10 +160,8 @@ function Home({ theme }) {
         }
 
         clearQueue();
-
+        await fetchTasks();
         toast.success("Offline tasks synced");
-
-        fetchTasks();
       } catch (error) {
         console.log("Sync failed");
       }
@@ -220,6 +220,14 @@ function Home({ theme }) {
     fetchTasks();
   }, []);
 
+  // this will be for caching tasks
+  // -- [
+  // --    Issue was in offline when I reloaded the frontend the task disapear
+  // --    even that it was going in the queue successfully
+  // -- ]
+  useEffect(() => {
+    localStorage.setItem("cachedTasks", JSON.stringify(tasks));
+  }, [tasks]);
   // FILTER + SEARCH + SORT
   const filteredTasks = tasks
     .filter((task) => {
