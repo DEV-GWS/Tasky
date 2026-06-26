@@ -130,10 +130,18 @@ function TaskCard({
                 task.completed ? "line-through opacity-60 text-gray-500" : ""
               }`}
             >
+              
               <span onClick={() => toggleTask(task)} className="cursor-pointer">
                 {task.completed ? "✅" : "⬜"}
               </span>
               {task.title}
+              {task.offline && (
+                <span
+                  className="text-[10px] px-2 py-1 rounded-full bg-orange-100 text-orange-700 font-semibold"
+                >
+                  Offline
+                </span>
+              )}
             </p>
 
             <div className="text-xs md:text-sm text-gray-500 mt-3 flex flex-wrap gap-4">
@@ -145,7 +153,8 @@ function TaskCard({
                       ? "bg-yellow-100 text-yellow-700"
                       : "bg-green-100 text-green-700"
                 }
-              `}>
+              `}
+              >
                 {task.priority === "high"
                   ? "🔴 High"
                   : task.priority === "medium"
