@@ -9,12 +9,20 @@ function Header({ theme, setTheme, logout, syncStatus, showLogout = false }) {
           : "bg-white border-gray-200"
       }`}
     >
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight">Task Manager</h1>
-
-        <p className="text-sm text-gray-500 mt-1">
-          Organize your tasks cleanly and efficiently
-        </p>
+      <div className="flex items-center gap-4">
+        <img
+          src="/pwa-192.png"
+          alt="Task Manager Logo"
+          className="w-12 h-12 rounded-xl shadow"
+        />
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Task Manager
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Organize your tasks cleanly and efficiently
+          </p>
+        </div>
       </div>
 
       <div className="flex items-center gap-3">
