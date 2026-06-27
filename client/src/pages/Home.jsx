@@ -199,7 +199,7 @@ function Home({ theme, syncStatus, setSyncStatus }) {
       window.removeEventListener("online", syncQueue);
     };
   }, [tasks, fetchTasks, setSyncStatus]);
-
+  
 
   const deleteTask = async (id) => {
     const deletedTask = tasks.find((t) => t._id === id);
@@ -548,20 +548,6 @@ function Home({ theme, syncStatus, setSyncStatus }) {
           />
         </div>
 
-        <TaskForm
-          title={title}
-          setTitle={setTitle}
-          priority={priority}
-          setPriority={setPriority}
-          dueDate={dueDate}
-          setDueDate={setDueDate}
-          createTask={createTask}
-          loading={loading}
-          theme={theme}
-          category={category}
-          setCategory={setCategory}
-        />
-
         <SearchBar
           search={search}
           setSearch={setSearch}
@@ -579,27 +565,40 @@ function Home({ theme, syncStatus, setSyncStatus }) {
         <div className="flex flex-wrap gap-3">
           <button
             onClick={completeAllActive}
-            className={`px-4 py-2 rounded-xl font-medium transition ${
+            className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 active:scale-95 shadow-sm ${
               theme === "dark"
-                ? "bg-green-600 hover:bg-green-500"
-                : "bg-green-500 hover:bg-green-600 text-white"
+                ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                : "bg-emerald-500 hover:bg-emerald-600 text-white"
             }`}
           >
-            ✓ Complete Active
+            ✓ Mark All Tasks Complete
           </button>
 
           <button
             onClick={clearCompleted}
-            className={`px-4 py-2 rounded-xl font-medium transition ${
+            className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 active:scale-95 shadow-sm ${
               theme === "dark"
-                ? "bg-green-600 hover:bg-green-500"
-                : "bg-green-500 hover:bg-green-600 text-white"
+                ? "bg-red-600 hover:bg-red-500 text-white"
+                : "bg-red-500 hover:bg-red-600 text-white"
             }`}
           >
-            ``` 🗑 Clear Completed ```
+            🗑 Clear All Completed Tasks
           </button>
         </div>
 
+        <TaskForm
+          title={title}
+          setTitle={setTitle}
+          priority={priority}
+          setPriority={setPriority}
+          dueDate={dueDate}
+          setDueDate={setDueDate}
+          createTask={createTask}
+          loading={loading}
+          theme={theme}
+          category={category}
+          setCategory={setCategory}
+        />
         {/* TASK LIST */}
         <DndContext
           collisionDetection={closestCenter}
