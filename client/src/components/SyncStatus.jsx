@@ -16,7 +16,7 @@ function SyncStatus({ syncStatus }) {
   return (
     <div
       className={`
-        px-3 py-1 rounded-full text-xs font-semibold
+        w-[75px] h-[25px] m-2 px-3 py-1 rounded-full text-xs font-semibold
         ${styles[syncStatus]}
       `}
     >

@@ -33,7 +33,7 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: "Task Manager",
+        name: "Tasky",
         short_name: "Tasks",
 
         description: "Modern task manager app",
