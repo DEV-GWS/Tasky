@@ -3,6 +3,7 @@ const Task = require("../models/Task");
 const getTasks = async (req, res) => {
   const tasks = await Task.find({
     user: req.user.id,
+    isDeleted: false,
   }).sort({ order: 1 });
 
   res.json(tasks);
@@ -25,10 +26,16 @@ const createTask = async (req, res) => {
 };
 
 const deleteTask = async (req, res) => {
-  await Task.findByIdAndDelete(req.params.id);
-
+  const task = await Task.findById(req.params.id);
+  if (!task) {
+    return res.status(404).json({
+      message: "Task not found",
+    });
+  }
+  task.isDeleted = true;
+  await task.save();
   res.json({
-    message: "Task deleted",
+    message: "Task moved to trash",
   });
 };
 

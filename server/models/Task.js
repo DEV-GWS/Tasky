@@ -37,6 +37,10 @@ const taskSchema = new mongoose.Schema(
       enum: ["work", "study", "personal", "project"],
       default: "personal",
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
