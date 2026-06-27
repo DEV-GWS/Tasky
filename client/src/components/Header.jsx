@@ -1,4 +1,5 @@
 import SyncStatus from "./SyncStatus";
+import { Link } from "react-router-dom";
 
 function Header({ theme, setTheme, logout, syncStatus, showLogout = false }) {
   return (
@@ -37,6 +38,19 @@ function Header({ theme, setTheme, logout, syncStatus, showLogout = false }) {
         >
           {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
         </button>
+
+        <Link
+          to="/trash"
+          className={`px-4 py-2 rounded-xl transition${
+            theme === "dark"
+              ? "bg-gray-800 hover:bg-gray-700"
+              : "bg-gray-200 hover:bg-gray-300"
+          }
+  `}
+        >
+          🗑 Trash
+        </Link>
+
         {showLogout && (
           <button
             onClick={logout}

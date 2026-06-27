@@ -108,6 +108,24 @@ const restoreTask = async (req, res) => {
   });
 };
 
+const getTrashTasks = async (req, res) => {
+  const tasks = await Task.find({
+    user: req.user.id,
+    isDeleted: true,
+  }).sort({
+    updatedAt: -1,
+  });
+  res.json(tasks);
+};
+
+const permanentlyDeleteTask = async (req, res) => {
+  await Task.findByIdAndDelete(req.params.id);
+
+  res.json({
+    message: "Task permanently deleted",
+  });
+};
+
 module.exports = {
   getTasks,
   createTask,
@@ -115,4 +133,6 @@ module.exports = {
   updateTask,
   reorderTasks,
   restoreTask,
+  getTrashTasks,
+  permanentlyDeleteTask,
 };

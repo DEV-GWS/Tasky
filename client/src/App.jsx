@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Trash from "./pages/Trash";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
@@ -64,7 +65,12 @@ function App() {
       <Routes location={location} key={location.pathname}>
         <Route
           element={
-            <MainLayout theme={theme} setTheme={setTheme} logout={logout} syncStatus={syncStatus} />
+            <MainLayout
+              theme={theme}
+              setTheme={setTheme}
+              logout={logout}
+              syncStatus={syncStatus}
+            />
           }
         >
           <Route
@@ -90,7 +96,23 @@ function App() {
             element={
               token ? (
                 <PageWrapper>
-                  <Home theme={theme} syncStatus={syncStatus} setSyncStatus={setSyncStatus} />
+                  <Home
+                    theme={theme}
+                    syncStatus={syncStatus}
+                    setSyncStatus={setSyncStatus}
+                  />
+                </PageWrapper>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/trash"
+            element={
+              token ? (
+                <PageWrapper>
+                  <Trash theme={theme} />
                 </PageWrapper>
               ) : (
                 <Navigate to="/login" />

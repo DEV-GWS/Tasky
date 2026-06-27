@@ -3,6 +3,9 @@ import Header from "../components/Header";
 
 function MainLayout({ theme, setTheme, logout, syncStatus }) {
   const location = useLocation();
+  const isAuthPage =
+    location.pathname.startsWith("/login") ||
+    location.pathname.startsWith("/register");
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
@@ -17,7 +20,7 @@ function MainLayout({ theme, setTheme, logout, syncStatus }) {
           setTheme={setTheme}
           logout={logout}
           syncStatus={syncStatus}
-          showLogout={location.pathname === "/"}
+         showLogout={!isAuthPage}
         />
 
         <Outlet />
