@@ -4,6 +4,12 @@ function SearchBar({ search, setSearch, sort, setSort, theme }) {
   const searchRef = useRef(null);
   useEffect(() => {
     const handleKeyDown = (e) => {
+      // ignore typing inside inputs
+      const tag = document.activeElement.tagName;
+
+      if (tag === "INPUT" || tag === "TEXTAREA") {
+        return;
+      }
       if (e.key === "/") {
         e.preventDefault();
 

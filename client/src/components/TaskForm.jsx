@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 function TaskForm({
   title,
   setTitle,
@@ -9,8 +11,32 @@ function TaskForm({
   loading,
   theme,
   category,
-  setCategory
+  setCategory,
 }) {
+  const taskInputRef = useRef(null);
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // ignore typing inside inputs
+      const tag = document.activeElement.tagName;
+
+      if (tag === "INPUT" || tag === "TEXTAREA") {
+        return;
+      }
+
+      // focus create task
+      if (e.key.toLowerCase() === "n") {
+        e.preventDefault();
+
+        taskInputRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   return (
     <div
       className={`p-5 rounded-2xl border flex flex-col md:flex-row gap-3 ${
@@ -22,6 +48,7 @@ function TaskForm({
       <input
         type="text"
         placeholder="New task..."
+        ref={taskInputRef}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         className={`flex-1 p-3 rounded-lg outline-none transition ${
