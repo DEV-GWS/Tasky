@@ -1,6 +1,35 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-function Week({ tasks, theme }) {
+function Week({ theme }) {
+  const [tasks, setTasks] = useState([]);
+
+  const token = localStorage.getItem("token");
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const fetchTasks = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/tasks`,
+        config,
+      );
+
+      setTasks(res.data);
+    } catch (error) {
+      toast.error("Failed to fetch tasks");
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   const today = new Date();
 
   const startOfWeek = new Date(today);
@@ -31,8 +60,11 @@ function Week({ tasks, theme }) {
     });
 
     tasks.forEach((task) => {
-      if (grouped[task.dueDate]) {
-        grouped[task.dueDate].push(task);
+      const formattedDate = task.dueDate
+        ?.split("T")[0];
+
+      if (grouped[formattedDate]) {
+        grouped[formattedDate].push(task);
       }
     });
 
@@ -41,7 +73,6 @@ function Week({ tasks, theme }) {
 
   return (
     <div className="space-y-6">
-      {/* HEADER */}
       <div>
         <h1 className="text-3xl font-bold">
           📅 Weekly Board
@@ -58,7 +89,6 @@ function Week({ tasks, theme }) {
         </p>
       </div>
 
-      {/* BOARD */}
       <div
         className="
           grid grid-cols-1 gap-4
@@ -71,7 +101,6 @@ function Week({ tasks, theme }) {
             className={`
               w-full md:min-w-[280px]
               rounded-2xl border p-4 space-y-4
-              transition
               ${
                 theme === "dark"
                   ? "bg-[#111827] border-gray-800"
@@ -79,7 +108,6 @@ function Week({ tasks, theme }) {
               }
             `}
           >
-            {/* DAY HEADER */}
             <div className="border-b pb-3 border-gray-200/10">
               <h2 className="font-bold text-lg">
                 {day.name}
@@ -90,7 +118,6 @@ function Week({ tasks, theme }) {
               </p>
             </div>
 
-            {/* TASKS */}
             <div className="space-y-3">
               {groupedTasks[day.date]?.length === 0 ? (
                 <div
@@ -110,8 +137,7 @@ function Week({ tasks, theme }) {
                   <div
                     key={task._id}
                     className={`
-                      rounded-xl border p-3 transition-all
-                      hover:scale-[1.01]
+                      rounded-xl border p-3
                       ${
                         theme === "dark"
                           ? "border-gray-700 bg-[#0b0f19]"
@@ -119,15 +145,14 @@ function Week({ tasks, theme }) {
                       }
                     `}
                   >
-                    {/* TITLE */}
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-medium leading-snug">
+                      <h3 className="font-medium">
                         {task.title}
                       </h3>
 
                       <span
                         className={`
-                          text-xs px-2 py-1 rounded-full whitespace-nowrap
+                          text-xs px-2 py-1 rounded-full
                           ${
                             task.priority === "high"
                               ? "bg-red-500/20 text-red-400"
@@ -142,7 +167,6 @@ function Week({ tasks, theme }) {
                       </span>
                     </div>
 
-                    {/* FOOTER */}
                     <div className="mt-3 flex items-center justify-between">
                       <span
                         className={`
@@ -158,7 +182,7 @@ function Week({ tasks, theme }) {
                       </span>
 
                       {task.completed && (
-                        <span className="text-green-500 text-sm font-medium">
+                        <span className="text-green-500 text-sm">
                           ✓ Done
                         </span>
                       )}

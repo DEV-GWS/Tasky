@@ -125,12 +125,7 @@ function App() {
             element={
               token ? (
                 <PageWrapper>
-                  <Week
-                    tasks={JSON.parse(
-                      localStorage.getItem("cachedTasks") || "[]",
-                    )}
-                    theme={theme}
-                  />
+                  <Week theme={theme} />
                 </PageWrapper>
               ) : (
                 <Navigate to="/login" />
