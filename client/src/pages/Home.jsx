@@ -200,16 +200,55 @@ function Home({ theme, syncStatus, setSyncStatus }) {
     };
   }, [tasks, fetchTasks, setSyncStatus]);
 
+
   const deleteTask = async (id) => {
+    const deletedTask = tasks.find((t) => t._id === id);
     try {
+      // optimistic UI
+      setTasks((prev) => prev.filter((task) => task._id !== id));
+
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/tasks/${id}`,
         config,
       );
-      setTasks((prev) => prev.filter((task) => task._id !== id));
-      toast.success("Task deleted");
+
+      toast(
+        (t) => (
+          <div className="flex items-center gap-3">
+            <span>Task moved to trash</span>
+
+            <button
+              onClick={async () => {
+                try {
+                  await axios.patch(
+                    `${import.meta.env.VITE_API_URL}/api/tasks/${id}/restore`,
+                    {},
+                    config,
+                  );
+
+                  setTasks((prev) => [deletedTask, ...prev]);
+
+                  toast.dismiss(t.id);
+
+                  toast.success("Task restored");
+                } catch (error) {
+                  toast.error("Failed to restore task");
+                }
+              }}
+              className="font-semibold text-blue-500 hover:text-blue-600"
+            >
+              Undo
+            </button>
+          </div>
+        ),
+        {
+          duration: 5000,
+        },
+      );
     } catch (error) {
       toast.error(error?.response?.data?.message || "Failed to delete task");
+
+      fetchTasks();
     }
   };
 

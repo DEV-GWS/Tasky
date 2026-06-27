@@ -94,10 +94,25 @@ const reorderTasks = async (req, res) => {
   }
 };
 
+const restoreTask = async (req, res) => {
+  const task = await Task.findById(req.params.id);
+  if (!task) {
+    return res.status(404).json({
+      message: "Task not found",
+    });
+  }
+  task.isDeleted = false;
+  await task.save();
+  res.json({
+    message: "Task restored",
+  });
+};
+
 module.exports = {
   getTasks,
   createTask,
   deleteTask,
   updateTask,
   reorderTasks,
+  restoreTask,
 };
