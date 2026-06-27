@@ -39,7 +39,16 @@ function Header({ theme, setTheme, logout, syncStatus, showLogout = false }) {
         >
           {theme === "dark" ? "🌙 Dark" : "☀️ Light"}
         </button>
-       
+        <Link
+          to="/week"
+          className={`px-4 py-2 rounded-xl transition ${
+            theme === "dark"
+              ? "bg-gray-800 hover:bg-gray-700"
+              : "bg-gray-200 hover:bg-gray-300"
+          }`}
+        >
+          📅 Week
+        </Link>
         <Link
           to="/trash"
           className={`px-4 py-2 rounded-xl transition ${
@@ -53,12 +62,12 @@ function Header({ theme, setTheme, logout, syncStatus, showLogout = false }) {
         </Link>
 
         {showLogout && (
-            <button
-              onClick={logout}
-              className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition active:scale-95"
-            >
-              Logout
-            </button>
+          <button
+            onClick={logout}
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500 text-white hover:bg-red-600 transition active:scale-95"
+          >
+            Logout
+          </button>
         )}
       </div>
     </div>

@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Trash from "./pages/Trash";
+import Week from "./pages/Week";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
@@ -113,6 +114,23 @@ function App() {
               token ? (
                 <PageWrapper>
                   <Trash theme={theme} />
+                </PageWrapper>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/week"
+            element={
+              token ? (
+                <PageWrapper>
+                  <Week
+                    tasks={JSON.parse(
+                      localStorage.getItem("cachedTasks") || "[]",
+                    )}
+                    theme={theme}
+                  />
                 </PageWrapper>
               ) : (
                 <Navigate to="/login" />
