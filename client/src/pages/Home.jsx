@@ -425,6 +425,61 @@ function Home({ theme, syncStatus, setSyncStatus }) {
       toast.error("Update failed");
     }
   };
+
+  const completeAllActive = async () => {
+    try {
+      const activeTasks = tasks.filter((t) => !t.completed);
+
+      // optimistic UI
+      setTasks((prev) =>
+        prev.map((task) => ({
+          ...task,
+          completed: true,
+        })),
+      );
+
+      await Promise.all(
+        activeTasks.map((task) =>
+          axios.patch(
+            `${import.meta.env.VITE_API_URL}/api/tasks/${task._id}`,
+            {
+              completed: true,
+            },
+            config,
+          ),
+        ),
+      );
+
+      toast.success("All tasks completed");
+    } catch (error) {
+      toast.error("Failed to complete tasks");
+      fetchTasks();
+    }
+  };
+
+  const clearCompleted = async () => {
+    try {
+      const completedTasks = tasks.filter((t) => t.completed);
+
+      // optimistic UI
+      setTasks((prev) => prev.filter((t) => !t.completed));
+
+      await Promise.all(
+        completedTasks.map((task) =>
+          axios.delete(
+            `${import.meta.env.VITE_API_URL}/api/tasks/${task._id}`,
+            config,
+          ),
+        ),
+      );
+
+      toast.success("Completed tasks cleared");
+    } catch (error) {
+      toast.error("Failed to clear tasks");
+      fetchTasks();
+    }
+  };
+
   return (
     <div
       className={`min-h-screen px-4 py-8 md:px-10 transition-colors duration-300 ${
@@ -482,6 +537,29 @@ function Home({ theme, syncStatus, setSyncStatus }) {
           theme={theme}
           tasks={tasks}
         />
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={completeAllActive}
+            className={`px-4 py-2 rounded-xl font-medium transition ${
+              theme === "dark"
+                ? "bg-green-600 hover:bg-green-500"
+                : "bg-green-500 hover:bg-green-600 text-white"
+            }`}
+          >
+            ✓ Complete Active
+          </button>
+
+          <button
+            onClick={clearCompleted}
+            className={`px-4 py-2 rounded-xl font-medium transition ${
+              theme === "dark"
+                ? "bg-green-600 hover:bg-green-500"
+                : "bg-green-500 hover:bg-green-600 text-white"
+            }`}
+          >
+            ``` 🗑 Clear Completed ```
+          </button>
+        </div>
 
         {/* TASK LIST */}
         <DndContext
