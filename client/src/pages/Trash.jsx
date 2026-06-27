@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 function Trash({ theme }) {
   const [tasks, setTasks] = useState([]);
@@ -63,8 +64,17 @@ function Trash({ theme }) {
 
   return (
     <div className="space-y-4">
+      <Link
+        to="/"
+        className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl transition ${
+          theme === "dark"
+            ? "bg-gray-800 hover:bg-gray-700"
+            : "bg-gray-200 hover:bg-gray-300"
+        }`}
+      >
+        ← Back Home
+      </Link>
       <h1 className="text-3xl font-bold">🗑 Trash</h1>
-
       {tasks.length === 0 ? (
         <div
           className={`p-10 rounded-2xl text-center border ${
