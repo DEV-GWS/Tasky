@@ -11,14 +11,14 @@ function Header({ theme, setTheme, logout, syncStatus, showLogout = false }) {
       }`}
     >
       <div className="flex items-center gap-4">
-        <img
+         <Link to="/"><img
           src="/pwa-192.png"
           alt="Tasky Logo"
           className="w-15 h-15 rounded-xl shadow"
-        />
+        /></Link>
         <div>
           <h1 className="flex items-center text-3xl font-semibold tracking-tight">
-            Tasky
+            <Link to="/"> Tasky</Link>
             <SyncStatus syncStatus={syncStatus} />
           </h1>
 
@@ -27,7 +27,6 @@ function Header({ theme, setTheme, logout, syncStatus, showLogout = false }) {
           </p>
         </div>
       </div>
-
       <div className="flex items-center gap-3">
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
